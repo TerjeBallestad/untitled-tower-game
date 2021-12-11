@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 79de5eca5823a4470b5afb61f54b7de3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - CondoPrefab: {fileID: 7358999516829503010, guid: 444facec1c9cc45019bddbfee5ee8e55,
+      type: 3}
+  - PurpleMaterial: {fileID: 2100000, guid: 39ebcff281e684db2914f9cdf064fcce, type: 2}
+  - BlueMaterial: {fileID: 2100000, guid: 05f26a368172c40e2ad0bf043e189f7e, type: 2}
+  - RedMaterial: {fileID: 2100000, guid: 4a6fd2f8cd8174693916e430deff9f63, type: 2}
+  - GreenMaterial: {fileID: 2100000, guid: 033891d8c6fcb4ee7b592e0a6fb47ed4, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
