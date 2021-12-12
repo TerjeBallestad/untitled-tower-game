@@ -106,6 +106,7 @@ public class Block : MonoBehaviour, IEatable {
                 block.GetComponent<BlockList> ().Add (this);
             }
         }
+        UpdateMergeList ();
     }
     private void OnCollisionExit2D (Collision2D other) {
         Block block = other.gameObject.GetComponent<Block> ();
@@ -126,21 +127,33 @@ public class Block : MonoBehaviour, IEatable {
     private IEnumerator DelayedNullAbove () {
         yield return new WaitForSeconds (GracePeriod);
         Above = null;
+        UpdateMergeList ();
     }
 
     private IEnumerator DelayedNullBelow () {
         yield return new WaitForSeconds (GracePeriod);
         Below = null;
+        UpdateMergeList ();
     }
 
     public void UpdateMergeList () {
-        if (Above.Type == Type) {
-            if (Above.MergeList) {
-
+        // if (Above.Type == Type) {
+        //     if (Above.MergeList.Remove (Above)) {
+        //         MergeList.Add (Above);
+        //     }
+        // }
+        if (Below && Below.Type == Type) {
+            foreach (var block in MergeList.Blocks) {
+                if (!Below.MergeList.Contains (block)) {
+                    block.MergeList = Below.MergeList;
+                    Below.MergeList.Add (block);
+                }
             }
+        } else {
+            MergeList = GetComponent<BlockList> ();
         }
-        if (Below.Type == Type) {
-
+        if (!MergeList.Contains (this)) {
+            MergeList.Blocks.AddRange (MergeList.Blocks);
         }
     }
 

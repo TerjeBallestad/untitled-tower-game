@@ -25,6 +25,10 @@ public class BlockList : MonoBehaviour {
         return Blocks.Contains (block);
     }
 
+    public bool Remove (Block block) {
+        return Blocks.Remove (block);
+    }
+
     public void TryMergeBlocks (float mergeTime) {
         MergeTime = mergeTime;
 

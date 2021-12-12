@@ -74,6 +74,7 @@ public class TowerManager : MonoBehaviour {
     public Block GetRandomBlock () {
         Block block = BlockPool.Get ();
         BlockType randomBlockType = (BlockType) Random.Range (0, 4);
+        block.gameObject.name = randomBlockType.ToString ();
 
         if (randomBlockType == previousSpawn) {
             similarSpawns++;
