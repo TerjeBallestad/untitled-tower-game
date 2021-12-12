@@ -7,6 +7,7 @@ public class Block : MonoBehaviour, IEatable {
     public BlockType Type;
     public Block Above;
     public Block Below;
+    public BlockList MergeList;
     [SerializeField] private float GracePeriod = 3;
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
@@ -14,7 +15,7 @@ public class Block : MonoBehaviour, IEatable {
     [SerializeField] private Material GreenMaterial;
     private TowerManager Tower;
     private MeshRenderer MeshRenderer;
-    private List<Block> matches;
+    // private List<Block> matches;
     private bool grounded;
     private IEnumerator aboveNullifier;
     private IEnumerator belowNullifier;
@@ -25,7 +26,10 @@ public class Block : MonoBehaviour, IEatable {
         MeshRenderer = GetComponent<MeshRenderer> ();
         aboveNullifier = DelayedNullAbove ();
         belowNullifier = DelayedNullBelow ();
-        matches = new List<Block> ();
+        MergeList = GetComponent<BlockList> ();
+        MergeList.Clear ();
+        MergeList.Add (this);
+        // matches = new List<Block> ();
 
         switch (Type) {
             case BlockType.green:
@@ -64,7 +68,7 @@ public class Block : MonoBehaviour, IEatable {
         for (int i = 0; i < Tower.TargetBlockCount; i++) {
 
             if (currentBlock.Type == Type) {
-                matches.Add (currentBlock);
+                // matches.Add (currentBlock);
                 if (currentBlock.Above) {
                     currentBlock = currentBlock.Above;
                 } else {
@@ -98,6 +102,9 @@ public class Block : MonoBehaviour, IEatable {
         } else {
             Below = block;
             StopCoroutine (belowNullifier);
+            if (block.Type == Type && !block.MergeList.Contains (this)) {
+                block.GetComponent<BlockList> ().Add (this);
+            }
         }
     }
     private void OnCollisionExit2D (Collision2D other) {
@@ -106,7 +113,7 @@ public class Block : MonoBehaviour, IEatable {
         if (other.gameObject.tag == "ground") {
             grounded = false;
         }
-        Tower.CheckForMatches ();
+        // Tower.CheckForMatches ();
         if (!block || !isActiveAndEnabled) return;
 
         if (block.transform.position.y > transform.position.y) {
@@ -124,6 +131,17 @@ public class Block : MonoBehaviour, IEatable {
     private IEnumerator DelayedNullBelow () {
         yield return new WaitForSeconds (GracePeriod);
         Below = null;
+    }
+
+    public void UpdateMergeList () {
+        if (Above.Type == Type) {
+            if (Above.MergeList) {
+
+            }
+        }
+        if (Below.Type == Type) {
+
+        }
     }
 
 }

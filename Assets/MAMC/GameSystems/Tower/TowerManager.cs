@@ -6,23 +6,29 @@ using UnityEngine;
 public class TowerManager : MonoBehaviour {
     [SerializeField] public int TargetBlockCount { get; private set; } = 10;
     [SerializeField] private float SpawnInterval = 2f;
-    private BlockPool blockPool;
-    [SerializeField] private List<Block> blocks;
+    [SerializeField] private float MatchTime = 3f;
+    private BlockPool BlockPool;
+    [SerializeField] private List<Block> Blocks;
     private int similarSpawns;
     private BlockType previousSpawn;
-    public bool stiffTower = true;
+    public bool rigidTower = true;
     private int blockCount;
     private float lastBlockSpawnTime;
     public List<BlockList> Matches;
+    public List<IEnumerator> MatchTimers;
 
     private void Start () {
-        blockPool = GetComponent<BlockPool> ();
-        blocks = new List<Block> ();
+        BlockPool = GetComponent<BlockPool> ();
+        Blocks = new List<Block> ();
         Matches = new List<BlockList> ();
+        MatchTimers = new List<IEnumerator> ();
+        for (int i = 0; i < TargetBlockCount; i++) {
+            Matches.Add (gameObject.AddComponent<BlockList> ());
+        }
     }
 
     private void Update () {
-        if (stiffTower) {
+        if (rigidTower) {
             StiffenTower ();
         }
     }
@@ -33,34 +39,40 @@ public class TowerManager : MonoBehaviour {
 
     public void CheckForMatches () {
         Matches.Clear ();
-        blocks.OrderBy (b => b.transform.position.y);
+        Blocks.OrderBy (b => b.transform.position.y);
         int i = 0;
-        while (i < blocks.Count) {
-            BlockType currentType = blocks[i].Type;
-            var matchList = new BlockList ();
+        while (i < Blocks.Count) {
+            BlockType currentType = Blocks[i].Type;
 
-            while (i < blocks.Count) {
-                if (currentType == blocks[i].Type) {
-                    matchList.Blocks.Add (blocks[i]);
+            while (i < Blocks.Count) {
+                if (currentType == Blocks[i].Type) {
+                    Matches[i].Setup (this);
+                    Matches[i].Add (Blocks[i]);
                     i++;
                 } else {
                     break;
                 }
             }
-            if (matchList.Blocks.Count > 2) {
-
-                MergeBlocks (matchList);
+            Matches[i].TryMergeBlocks (3);
+        }
+        for (int j = 0; j < Matches.Count; j++) {
+            if (MatchTimers[j] == null) {
+                // IEnumerator E = MergeBlocks (Matches[j]);
             }
-            Matches.Add (matchList);
+            // StopCoroutine (MatchTimers[j]);
+            // StartCoroutine (MatchTimers[j]);
+
+            // }
+            // for (var list in Matches) {
+            //     if (list.Blocks.Count > 2) {
+            //         MergeBlocks (list);
+            //     }
+            // }
         }
     }
 
-    private void MergeBlocks (BlockList blockList) {
-        SetState (new Matching (this, blockList));
-    }
-
     public Block GetRandomBlock () {
-        Block block = blockPool.Get ();
+        Block block = BlockPool.Get ();
         BlockType randomBlockType = (BlockType) Random.Range (0, 4);
 
         if (randomBlockType == previousSpawn) {
@@ -78,23 +90,23 @@ public class TowerManager : MonoBehaviour {
         previousSpawn = randomBlockType;
 
         block.Setup (randomBlockType, this);
-        blocks.Add (block);
         return block;
     }
 
     public void DespawnBlock (Block block) {
-        blocks.Remove (block);
-        blockPool.ReturnToPool (block);
+        Blocks.Remove (block);
+        BlockPool.ReturnToPool (block);
         blockCount--;
     }
 
     public void StiffenTower () {
-        foreach (var block in blocks) {
+        foreach (var block in Blocks) {
             block.GetComponent<Rigidbody2D> ().AddForce (new Vector3 (-block.transform.position.x * 10, 0));
         }
     }
     void SpawnBlock () {
         Block block = GetRandomBlock ();
+        Blocks.Add (block);
         block.transform.SetPositionAndRotation (transform.position, Quaternion.identity);
         lastBlockSpawnTime = Time.time;
         blockCount++;
@@ -111,14 +123,5 @@ public class TowerManager : MonoBehaviour {
     }
     public void EatBlock (Block block) {
         DespawnBlock (block);
-    }
-}
-
-[System.Serializable]
-public class BlockList {
-    [SerializeField] public List<Block> Blocks;
-
-    public BlockList () {
-        Blocks = new List<Block> ();
     }
 }
