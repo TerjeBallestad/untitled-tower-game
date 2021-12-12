@@ -40,6 +40,9 @@ public class BlockList : MonoBehaviour {
     }
 
     private IEnumerator MergeBlocks () {
+        foreach (var block in Blocks) {
+            GetComponent<Rigidbody2D> ().isKinematic = true;
+        }
         yield return new WaitForSeconds (MergeTime);
         foreach (var block in Blocks) {
             Tower.DespawnBlock (block);

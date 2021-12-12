@@ -27,7 +27,7 @@ public class Block : MonoBehaviour, IEatable {
         aboveNullifier = DelayedNullAbove ();
         belowNullifier = DelayedNullBelow ();
         MergeList = GetComponent<BlockList> ();
-        MergeList.Clear ();
+        MergeList.Setup (tower);
         MergeList.Add (this);
         // matches = new List<Block> ();
 
@@ -142,19 +142,36 @@ public class Block : MonoBehaviour, IEatable {
         //         MergeList.Add (Above);
         //     }
         // }
-        if (Below && Below.Type == Type) {
-            foreach (var block in MergeList.Blocks) {
-                if (!Below.MergeList.Contains (block)) {
-                    block.MergeList = Below.MergeList;
-                    Below.MergeList.Add (block);
+        Block currentBlock = this;
+        while (currentBlock.Below != null && currentBlock.Below.Type == Type) {
+            currentBlock = currentBlock.Below;
+            if (currentBlock.Below == null || currentBlock.Below.Type != Type) {
+                MergeList = currentBlock.MergeList;
+                if (!MergeList.Contains (this)) {
+                    MergeList.Add (this);
+                    MergeList.TryMergeBlocks (3);
+                    GetComponent<BlockList> ().Clear ();
+                    return;
                 }
             }
-        } else {
-            MergeList = GetComponent<BlockList> ();
         }
-        if (!MergeList.Contains (this)) {
-            MergeList.Blocks.AddRange (MergeList.Blocks);
-        }
+        MergeList = GetComponent<BlockList> ();
+        MergeList.Clear ();
+        MergeList.Add (this);
+
+        // if (Below && Below.Type == Type) {
+        //     foreach (var block in MergeList.Blocks) {
+        //         if (!Below.MergeList.Contains (block)) {
+        //             block.MergeList = Below.MergeList;
+        //             Below.MergeList.Add (block);
+        //         }
+        //     }
+        // } else {
+        //     MergeList = GetComponent<BlockList> ();
+        // }
+        // if (!MergeList.Contains (this)) {
+        //     MergeList.Blocks.AddRange (MergeList.Blocks);
+        // }
     }
 
 }
