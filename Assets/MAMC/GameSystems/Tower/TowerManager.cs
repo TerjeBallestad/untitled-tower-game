@@ -16,14 +16,17 @@ public class TowerManager : MonoBehaviour {
     private float lastBlockSpawnTime;
     public List<BlockList> Matches;
     public List<IEnumerator> MatchTimers;
+    public List<BlockDetector> BlockDetectors;
 
     private void Start () {
         BlockPool = GetComponent<BlockPool> ();
         Blocks = new List<Block> ();
         Matches = new List<BlockList> ();
         MatchTimers = new List<IEnumerator> ();
-        for (int i = 0; i < TargetBlockCount; i++) {
-            Matches.Add (gameObject.AddComponent<BlockList> ());
+        for (int i = 0; i < BlockDetectors.Count; i++) {
+            BlockList BL = gameObject.AddComponent<BlockList> ();
+            BL.Setup (this);
+            Matches.Add (BL);
         }
     }
 
@@ -37,38 +40,57 @@ public class TowerManager : MonoBehaviour {
         StartCoroutine (state.Start ());
     }
 
+    public void NewCheckForMatches () {
+        int i = 0;
+        foreach (var list in Matches) {
+            list.Clear ();
+        }
+        while (BlockDetectors[i].blockInRange != null && i < BlockDetectors.Count) {
+            BlockType currentType = BlockDetectors[i].blockInRange.Type;
+            BlockList matchList = Matches[i];
+            while (i < BlockDetectors.Count) {
+                if (BlockDetectors[i].blockInRange != null && currentType == BlockDetectors[i].blockInRange.Type) {
+                    matchList.Add (BlockDetectors[i].blockInRange);
+                    i++;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
     public void CheckForMatches () {
         Matches.Clear ();
         Blocks.OrderBy (b => b.transform.position.y);
         int i = 0;
         while (i < Blocks.Count) {
             BlockType currentType = Blocks[i].Type;
-
+            var matchList = gameObject.AddComponent<BlockList> ();
             while (i < Blocks.Count) {
                 if (currentType == Blocks[i].Type) {
-                    Matches[i].Setup (this);
-                    Matches[i].Add (Blocks[i]);
+                    matchList.Add (Blocks[i]);
                     i++;
                 } else {
                     break;
                 }
             }
-            Matches[i].TryMergeBlocks (3);
+            // Matches[i].TryMergeBlocks (3);
         }
-        for (int j = 0; j < Matches.Count; j++) {
-            if (MatchTimers[j] == null) {
-                // IEnumerator E = MergeBlocks (Matches[j]);
-            }
-            // StopCoroutine (MatchTimers[j]);
-            // StartCoroutine (MatchTimers[j]);
 
-            // }
-            // for (var list in Matches) {
-            //     if (list.Blocks.Count > 2) {
-            //         MergeBlocks (list);
-            //     }
-            // }
-        }
+        // for (int j = 0; j < Matches.Count; j++) {
+        // if (MatchTimers[j] == null) {
+        // IEnumerator E = MergeBlocks (Matches[j]);
+        // }
+        // StopCoroutine (MatchTimers[j]);
+        // StartCoroutine (MatchTimers[j]);
+
+        // }
+        // for (var list in Matches) {
+        //     if (list.Blocks.Count > 2) {
+        //         MergeBlocks (list);
+        //     }
+        // }
+
     }
 
     public Block GetRandomBlock () {
@@ -124,5 +146,13 @@ public class TowerManager : MonoBehaviour {
     }
     public void EatBlock (Block block) {
         DespawnBlock (block);
+    }
+
+    [ContextMenu ("GetAllBlockDetectors")]
+    public void GatherBlockDetectors () {
+        BlockDetectors = FindObjectsOfType<BlockDetector> ().ToList<BlockDetector> ();
+        foreach (var detector in BlockDetectors) {
+            detector.Tower = this;
+        }
     }
 }
