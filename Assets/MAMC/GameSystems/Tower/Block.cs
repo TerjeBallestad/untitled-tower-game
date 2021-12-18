@@ -18,7 +18,6 @@ public class Block : MonoBehaviour, IEatable {
         Type = type;
         Tower = tower;
         MeshRenderer = GetComponent<MeshRenderer> ();
-        // matches = new List<Block> ();
 
         switch (Type) {
             case BlockType.green:
