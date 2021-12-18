@@ -5,6 +5,7 @@ using UnityEngine;
 public class Block : MonoBehaviour, IEatable {
 
     public BlockType Type;
+    public BlockList MergeList;
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
     [SerializeField] private Material BlueMaterial;

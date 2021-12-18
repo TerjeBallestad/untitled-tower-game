@@ -12,10 +12,12 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : Component {
             AddObjects (1);
         var newObject = objects.Dequeue ();
         newObject.gameObject.SetActive (true);
+        OnObjectCreation (newObject);
         return newObject;
     }
 
     public void ReturnToPool (T objectToReturn) {
+        OnObjectReturn (objectToReturn);
         objectToReturn.gameObject.SetActive (false);
         objectToReturn.transform.SetParent (transform);
         objects.Enqueue (objectToReturn);
@@ -31,4 +33,7 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : Component {
             objects.Enqueue (newObject);
         }
     }
+
+    public abstract void OnObjectCreation (T newObject);
+    public abstract void OnObjectReturn (T objectToReturn);
 }

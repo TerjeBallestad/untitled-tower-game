@@ -5,33 +5,34 @@ using UnityEngine;
 
 public class TowerManager : MonoBehaviour {
     [SerializeField] public int TargetBlockCount { get; private set; } = 10;
-    [SerializeField] private float SpawnInterval = 2f;
-    [SerializeField] private float MatchTime = 3f;
-    private BlockPool BlockPool;
-    [SerializeField] private List<Block> Blocks;
-    private int similarSpawns;
-    private BlockType previousSpawn;
-    public bool rigidTower = true;
-    private int blockCount;
-    private float lastBlockSpawnTime;
+    [SerializeField] private float _spawnInterval = 2f;
+    [SerializeField] private float _matchTime = 3f;
+    [SerializeField] private MergingManager MergingManager;
+    private BlockPool _blockPool;
+    [SerializeField] private List<Block> _blocks;
+    private int _similarSpawns;
+    private BlockType _previousSpawn;
+    public bool RigidTower = true;
+    private int _blockCount;
+    private float _lastBlockSpawnTime;
     public List<BlockList> Matches;
     public List<IEnumerator> MatchTimers;
     public List<BlockDetector> BlockDetectors;
 
     private void Start () {
-        BlockPool = GetComponent<BlockPool> ();
-        Blocks = new List<Block> ();
+        _blockPool = GetComponent<BlockPool> ();
+        _blocks = new List<Block> ();
         Matches = new List<BlockList> ();
         MatchTimers = new List<IEnumerator> ();
+        MergingManager.Tower = this;
         for (int i = 0; i < BlockDetectors.Count; i++) {
             BlockList BL = gameObject.AddComponent<BlockList> ();
-            BL.Setup (this);
             Matches.Add (BL);
         }
     }
 
     private void Update () {
-        if (rigidTower) {
+        if (RigidTower) {
             StiffenTower ();
         }
     }
@@ -61,14 +62,14 @@ public class TowerManager : MonoBehaviour {
 
     public void CheckForMatches () {
         Matches.Clear ();
-        Blocks.OrderBy (b => b.transform.position.y);
+        _blocks.OrderBy (b => b.transform.position.y);
         int i = 0;
-        while (i < Blocks.Count) {
-            BlockType currentType = Blocks[i].Type;
+        while (i < _blocks.Count) {
+            BlockType currentType = _blocks[i].Type;
             var matchList = gameObject.AddComponent<BlockList> ();
-            while (i < Blocks.Count) {
-                if (currentType == Blocks[i].Type) {
-                    matchList.Add (Blocks[i]);
+            while (i < _blocks.Count) {
+                if (currentType == _blocks[i].Type) {
+                    matchList.Add (_blocks[i]);
                     i++;
                 } else {
                     break;
@@ -94,13 +95,13 @@ public class TowerManager : MonoBehaviour {
     }
 
     public Block GetRandomBlock () {
-        Block block = BlockPool.Get ();
+        Block block = _blockPool.Get ();
         BlockType randomBlockType = (BlockType) Random.Range (0, 4);
         block.gameObject.name = randomBlockType.ToString ();
 
-        if (randomBlockType == previousSpawn) {
-            similarSpawns++;
-            if (similarSpawns > 1) {
+        if (randomBlockType == _previousSpawn) {
+            _similarSpawns++;
+            if (_similarSpawns > 1) {
                 if ((int) randomBlockType < 1) {
                     randomBlockType = (BlockType) 3; // set it to the highest enum
                 } else {
@@ -108,35 +109,35 @@ public class TowerManager : MonoBehaviour {
                 }
             }
         } else {
-            similarSpawns = 0;
+            _similarSpawns = 0;
         }
-        previousSpawn = randomBlockType;
+        _previousSpawn = randomBlockType;
 
         block.Setup (randomBlockType, this);
         return block;
     }
 
     public void DespawnBlock (Block block) {
-        Blocks.Remove (block);
-        BlockPool.ReturnToPool (block);
-        blockCount--;
+        _blocks.Remove (block);
+        _blockPool.ReturnToPool (block);
+        _blockCount--;
     }
 
     public void StiffenTower () {
-        foreach (var block in Blocks) {
+        foreach (var block in _blocks) {
             block.GetComponent<Rigidbody2D> ().AddForce (new Vector3 (-block.transform.position.x * 10, 0));
         }
     }
     void SpawnBlock () {
         Block block = GetRandomBlock ();
-        Blocks.Add (block);
+        _blocks.Add (block);
         block.transform.SetPositionAndRotation (transform.position, Quaternion.identity);
-        lastBlockSpawnTime = Time.time;
-        blockCount++;
+        _lastBlockSpawnTime = Time.time;
+        _blockCount++;
     }
 
     bool AbleToSpawnBlock () {
-        return blockCount < TargetBlockCount && Time.time - lastBlockSpawnTime > SpawnInterval;
+        return _blockCount < TargetBlockCount && Time.time - _lastBlockSpawnTime > _spawnInterval;
     }
     public IEnumerator BlockSpawner () {
         while (true) {
@@ -148,11 +149,4 @@ public class TowerManager : MonoBehaviour {
         DespawnBlock (block);
     }
 
-    [ContextMenu ("GetAllBlockDetectors")]
-    public void GatherBlockDetectors () {
-        BlockDetectors = FindObjectsOfType<BlockDetector> ().ToList<BlockDetector> ();
-        foreach (var detector in BlockDetectors) {
-            detector.Tower = this;
-        }
-    }
 }

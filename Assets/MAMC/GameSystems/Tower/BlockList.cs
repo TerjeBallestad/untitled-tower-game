@@ -8,12 +8,14 @@ public class BlockList : MonoBehaviour {
     public float MergeTime = 3f;
     public TowerManager Tower;
     private IEnumerator MergeTimer;
-    [SerializeField] public List<Block> Blocks;
+    private BlockMergerPool _mergerPool;
+    public List<Block> Blocks;
 
-    public void Setup (TowerManager tower) {
+    public void Setup (TowerManager tower, BlockMergerPool mergerPool) {
         Tower = tower;
         Blocks = new List<Block> ();
         MergeTimer = MergeBlocks ();
+        _mergerPool = mergerPool;
     }
     public void Clear () {
         Blocks.Clear ();
@@ -32,7 +34,7 @@ public class BlockList : MonoBehaviour {
     public void TryMergeBlocks (float mergeTime) {
         MergeTime = mergeTime;
 
-        if (Count != Blocks.Count) {
+        if (Count != Blocks.Count && Blocks.Count > 2) {
             StopCoroutine (MergeTimer);
             StartCoroutine (MergeTimer);
             Count = Blocks.Count;
@@ -41,12 +43,16 @@ public class BlockList : MonoBehaviour {
 
     private IEnumerator MergeBlocks () {
         foreach (var block in Blocks) {
-            GetComponent<Rigidbody2D> ().isKinematic = true;
+            Rigidbody2D rb = block.GetComponent<Rigidbody2D> ();
+            rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
         }
         yield return new WaitForSeconds (MergeTime);
         foreach (var block in Blocks) {
             Tower.DespawnBlock (block);
+            block.MergeList = null;
         }
         Clear ();
+        _mergerPool.ReturnToPool (this);
     }
 }
