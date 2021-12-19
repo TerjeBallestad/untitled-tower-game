@@ -9,7 +9,7 @@ public class BlockPool : ObjectPool<Block> {
     }
     public override void OnObjectReturn (Block block) {
         if (block.MergeList != null) {
-            block.MergeList.Remove (block);
+            block.MergeList = null;
         }
     }
 

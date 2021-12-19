@@ -9,7 +9,7 @@ public class Monster : MonoBehaviour {
 
     }
     private void OnTriggerEnter2D (Collider2D other) {
-        other.GetComponent<IEatable> ().Eat ();
+        other.GetComponent<IEatable> ().GetEaten ();
     }
 
     // Update is called once per frame

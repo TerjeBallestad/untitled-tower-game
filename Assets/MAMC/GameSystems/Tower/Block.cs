@@ -38,7 +38,7 @@ public class Block : MonoBehaviour, IEatable {
         }
     }
 
-    public void Eat () {
+    public void GetEaten () {
         Tower.EatBlock (this);
     }
 

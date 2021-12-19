@@ -46,10 +46,13 @@ public class BlockList : MonoBehaviour {
     public void TryMergeBlocks (float mergeTime) {
         MergeTime = mergeTime;
 
-        if (Count != Blocks.Count && Blocks.Count > 2) {
+        if (Count != Blocks.Count && Blocks.Count >= 3) {
             StopCoroutine (MergeTimer);
             StartCoroutine (MergeTimer);
             Count = Blocks.Count;
+        } else {
+            Clear ();
+            _mergerPool.ReturnToPool (this);
         }
     }
 
@@ -62,7 +65,6 @@ public class BlockList : MonoBehaviour {
         yield return new WaitForSeconds (MergeTime);
         foreach (var block in Blocks) {
             Tower.DespawnBlock (block);
-            block.MergeList = null;
         }
         Clear ();
         _mergerPool.ReturnToPool (this);
