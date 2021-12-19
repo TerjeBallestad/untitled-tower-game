@@ -7,8 +7,10 @@ public class MergingManager : MonoBehaviour {
     public BlockMergerPool MergerPool { get; private set; }
     private List<BlockDetector> _blockDetectors;
     public Block[] _blocks;
+    private List<BlockList> Matches;
 
     void Start () {
+        Matches = new List<BlockList> ();
         MergerPool = GetComponent<BlockMergerPool> ();
         _blockDetectors = new List<BlockDetector> ();
         _blockDetectors.AddRange (GetComponentsInChildren<BlockDetector> ());
@@ -22,50 +24,79 @@ public class MergingManager : MonoBehaviour {
     }
 
     public void MoveBlockToIndex (Block block, int index) {
-
-        for (int i = 0; i < _blocks.Length; i++) {
-            if (_blocks[i] == block) {
-                _blocks[i] = null;
-            }
+        // if _blocks contains block, nullify
+        // for (int i = 0; i < _blocks.Length; i++) {
+        //     if (_blocks[i] == block) {
+        //         _blocks[i] = null;
+        //     }
+        // }
+        if (block.index > 0) {
+            _blocks[block.index] = null;
         }
-        block.gameObject.name = index.ToString () + " - " + block.Type.ToString ();
         _blocks.SetValue (block, index);
+        block.index = index;
+        if (block.MergeList == null) {
+            MergerPool.Get ().Setup (block, Tower, MergerPool);
+        }
+        TryAddToNeighbourList (block, index);
+        block.gameObject.name = index.ToString () + " - " + block.Type.ToString ();
     }
 
-    public bool TryNullifyIndex (Block block, int index) {
-        if (_blocks[index] == block) {
+    private bool TryAddToNeighbourList (Block block, int index) {
+
+        int above = index + 1;
+        int below = index - 1;
+        if (above < _blocks.Length && _blocks[above] != null && _blocks[above].MergeList != null && _blocks[above].MergeList.Type == block.Type) {
+            _blocks[above].MergeList.AddUniqueRange (block.MergeList);
+            Debug.Log ("merging list: " + block.name + " With something above");
+            return true;
+        } else if (below >= 0 && _blocks[below] != null && _blocks[below].MergeList != null && _blocks[below].MergeList.Type == block.Type) {
+            _blocks[below].MergeList.AddUniqueRange (block.MergeList);
+            Debug.Log ("merging list: " + block.name + " With something below");
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryNullifyBlockAt (Block block, int index) {
+        if (_blocks[index] == block && block.gameObject.activeInHierarchy) {
             _blocks[index] = null;
+            block.MergeList.Remove (block);
+            block.index = -1;
             return true;
         } else return false;
     }
 
     public void CheckForMatches () {
 
-        Block previousBlock = null;
         List<BlockList> matches = new List<BlockList> ();
 
         for (int i = 0; i < _blocks.Length; i++) {
             Block currentBlock = _blocks[i];
             if (currentBlock == null) {
-                previousBlock = null;
                 continue;
             }
-            if (previousBlock == null || previousBlock.Type != currentBlock.Type) {
-                if (currentBlock.MergeList == null) {
-                    BlockList mergeList = MergerPool.Get ();
-                    mergeList.Setup (Tower, MergerPool);
-                    mergeList.AddUnique (currentBlock);
-                    matches.Add (mergeList);
-                }
-
-            } else {
-                previousBlock.MergeList.AddUnique (currentBlock);
+            if (!matches.Contains (currentBlock.MergeList)) {
+                matches.Add (currentBlock.MergeList);
             }
-            previousBlock = currentBlock;
+
         }
         foreach (var mergeList in matches) {
             mergeList.TryMergeBlocks (3);
+
         }
+        // if (previousBlock == null || previousBlock.Type != currentBlock.Type) {
+        //     if (currentBlock.MergeList == null) {
+        //         BlockList mergeList = MergerPool.Get ();
+        //         mergeList.Setup (currentBlock.Type, Tower, MergerPool);
+        //         mergeList.AddUnique (currentBlock);
+        //         Matches.Add (mergeList);
+        //     }
+
+        // } else {
+        //     previousBlock.MergeList.AddUnique (currentBlock);
+        // }
+        // previousBlock = currentBlock;
 
         //     Block previous = null;
         //     Block next = null;

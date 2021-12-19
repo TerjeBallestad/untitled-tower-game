@@ -5,6 +5,7 @@ using UnityEngine;
 public class Block : MonoBehaviour, IEatable {
 
     public BlockType Type;
+    public int index;
     public BlockList MergeList;
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
@@ -12,11 +13,11 @@ public class Block : MonoBehaviour, IEatable {
     [SerializeField] private Material GreenMaterial;
     private TowerManager Tower;
     private MeshRenderer MeshRenderer;
-    private bool grounded;
 
     public void Setup (BlockType type, TowerManager tower) {
         Type = type;
         Tower = tower;
+        index = -1;
         MeshRenderer = GetComponent<MeshRenderer> ();
 
         switch (Type) {
@@ -40,27 +41,6 @@ public class Block : MonoBehaviour, IEatable {
 
     public void GetEaten () {
         Tower.EatBlock (this);
-    }
-
-    private void OnCollisionEnter2D (Collision2D other) {
-
-        Block block = other.gameObject.GetComponent<Block> ();
-
-        if (other.gameObject.tag == "ground") {
-            grounded = true;
-        }
-
-        if (!block) return;
-
-    }
-    private void OnCollisionExit2D (Collision2D other) {
-        Block block = other.gameObject.GetComponent<Block> ();
-
-        if (other.gameObject.tag == "ground") {
-            grounded = false;
-        }
-        if (!block || !isActiveAndEnabled) return;
-
     }
 
 }

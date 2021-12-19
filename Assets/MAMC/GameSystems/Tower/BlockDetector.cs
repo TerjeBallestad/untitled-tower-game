@@ -19,7 +19,7 @@ public class BlockDetector : MonoBehaviour {
         Block block = other.GetComponent<Block> ();
         if (!block) return;
 
-        MergeManager.TryNullifyIndex (block, index);
+        MergeManager.TryNullifyBlockAt (block, index);
         MergeManager.CheckForMatches ();
     }
 }

@@ -118,6 +118,8 @@ public class TowerManager : MonoBehaviour {
     }
 
     public void DespawnBlock (Block block) {
+        if (block.index >= 0)
+            MergingManager._blocks[block.index] = null;
         _blocks.Remove (block);
         _blockPool.ReturnToPool (block);
         _blockCount--;
