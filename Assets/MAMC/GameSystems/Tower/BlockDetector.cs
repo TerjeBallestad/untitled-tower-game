@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class BlockDetector : MonoBehaviour {
 
-    public Block blockInRange;
     public MergingManager MergeManager;
+    public int index; // set by merging manager
 
     private void OnTriggerEnter2D (Collider2D other) {
         Block block = other.GetComponent<Block> ();
         if (!block) return;
 
-        blockInRange = block;
+        MergeManager.MoveBlockToIndex (block, index);
         MergeManager.CheckForMatches ();
     }
 
     private void OnTriggerExit2D (Collider2D other) {
         Block block = other.GetComponent<Block> ();
-        if (block == blockInRange) {
-            blockInRange = null;
-            MergeManager.CheckForMatches ();
-        }
+        if (!block) return;
+
+        MergeManager.TryNullifyIndex (block, index);
+        MergeManager.CheckForMatches ();
     }
 }

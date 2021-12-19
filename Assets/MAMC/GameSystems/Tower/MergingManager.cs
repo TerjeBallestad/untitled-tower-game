@@ -13,17 +13,32 @@ public class MergingManager : MonoBehaviour {
         _blockDetectors = new List<BlockDetector> ();
         _blockDetectors.AddRange (GetComponentsInChildren<BlockDetector> ());
         _blocks = new Block[_blockDetectors.Count];
+        int i = 0;
         foreach (var detector in _blockDetectors) {
-
             detector.MergeManager = this;
+            detector.index = i;
+            i++;
         }
     }
 
-    public void CheckForMatches () {
+    public void MoveBlockToIndex (Block block, int index) {
 
-        for (int j = 0; j < _blocks.Length; j++) {
-            _blocks[j] = _blockDetectors[j].blockInRange;
+        for (int i = 0; i < _blocks.Length; i++) {
+            if (_blocks[i] == block) {
+                _blocks[i] = null;
+            }
         }
+        _blocks.SetValue (block, index);
+    }
+
+    public bool TryNullifyIndex (Block block, int index) {
+        if (_blocks[index] == block) {
+            _blocks[index] = null;
+            return true;
+        } else return false;
+    }
+
+    public void CheckForMatches () {
 
         Block previous = null;
         Block next = null;

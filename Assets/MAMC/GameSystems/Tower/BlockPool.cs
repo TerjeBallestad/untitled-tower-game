@@ -7,6 +7,10 @@ public class BlockPool : ObjectPool<Block> {
         rb.constraints = RigidbodyConstraints2D.None;
 
     }
-    public override void OnObjectReturn (Block block) { }
+    public override void OnObjectReturn (Block block) {
+        if (block.MergeList != null) {
+            block.MergeList.Remove (block);
+        }
+    }
 
 }

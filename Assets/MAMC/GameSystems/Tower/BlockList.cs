@@ -18,16 +18,28 @@ public class BlockList : MonoBehaviour {
         _mergerPool = mergerPool;
     }
     public void Clear () {
+        foreach (var block in Blocks) {
+            block.MergeList = null;
+        }
         Blocks.Clear ();
     }
     public void Add (Block block) {
         Blocks.Add (block);
+    }
+    public bool AddUnique (Block block) {
+        if (!Blocks.Contains (block)) {
+            Blocks.Add (block);
+            block.MergeList = this;
+            return true;
+        }
+        return false;
     }
     public bool Contains (Block block) {
         return Blocks.Contains (block);
     }
 
     public bool Remove (Block block) {
+        block.MergeList = null;
         return Blocks.Remove (block);
     }
 
