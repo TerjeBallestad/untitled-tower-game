@@ -23,6 +23,10 @@ public class MergingManager : MonoBehaviour {
         }
     }
 
+    private void Update () {
+        CheckForMatches ();
+    }
+
     public void MoveBlockToIndex (Block block, int index) {
         // if _blocks contains block, nullify
         // for (int i = 0; i < _blocks.Length; i++) {
@@ -35,10 +39,10 @@ public class MergingManager : MonoBehaviour {
         }
         _blocks.SetValue (block, index);
         block.index = index;
-        if (block.MergeList == null) {
-            MergerPool.Get ().Setup (block, Tower, MergerPool);
-        }
-        TryAddToNeighbourList (block, index);
+        // if (block.MergeList == null) {
+        //     MergerPool.Get ().Setup (block, Tower, MergerPool);
+        // }
+        // TryAddToNeighbourList (block, index);
         block.gameObject.name = index.ToString () + " - " + block.Type.ToString ();
     }
 
@@ -70,21 +74,24 @@ public class MergingManager : MonoBehaviour {
     public void CheckForMatches () {
 
         List<BlockList> matches = new List<BlockList> ();
-
-        for (int i = 0; i < _blocks.Length; i++) {
-            Block currentBlock = _blocks[i];
-            if (currentBlock == null) {
-                continue;
-            }
-            if (!matches.Contains (currentBlock.MergeList)) {
-                matches.Add (currentBlock.MergeList);
-            }
-
+        foreach (var detector in _blockDetectors) {
+            detector.UpdateClosestBlock ();
         }
-        foreach (var mergeList in matches) {
-            mergeList.TryMergeBlocks (3);
 
-        }
+        // for (int i = 0; i < _blocks.Length; i++) {
+        //     Block currentBlock = _blocks[i];
+        //     if (currentBlock == null) {
+        //         continue;
+        //     }
+        //     if (!matches.Contains (currentBlock.MergeList)) {
+        //         matches.Add (currentBlock.MergeList);
+        //     }
+
+        // }
+        // foreach (var mergeList in matches) {
+        //     mergeList.TryMergeBlocks (3);
+
+        // }
         // if (previousBlock == null || previousBlock.Type != currentBlock.Type) {
         //     if (currentBlock.MergeList == null) {
         //         BlockList mergeList = MergerPool.Get ();
