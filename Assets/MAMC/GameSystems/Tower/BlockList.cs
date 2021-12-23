@@ -102,9 +102,9 @@ public class BlockList : MonoBehaviour {
             foreach (var block in Blocks) {
                 Rigidbody2D rb = block.GetComponent<Rigidbody2D> ();
                 // rb.constraints = RigidbodyConstraints2D.FreezePosition;
-
             }
-            Debug.Log ((MergeTime - Time.time));
+
+            // Debug.Log ((MergeTime - Time.time));
             yield return instruction;
         }
         Debug.Log ("timer ended");

@@ -15,8 +15,6 @@ public class Matching : TowerState {
             Tower.DespawnBlock (block);
         }
         Matches.Clear ();
-
         Tower.SetState (new NormalState (Tower));
     }
-
 }

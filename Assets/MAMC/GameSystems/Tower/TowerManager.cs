@@ -18,6 +18,7 @@ public class TowerManager : MonoBehaviour {
     public List<BlockList> Matches;
     public List<IEnumerator> MatchTimers;
     public List<BlockDetector> BlockDetectors;
+    private PowerUp _powerUp;
 
     private void Start () {
         _blockPool = GetComponent<BlockPool> ();
@@ -25,16 +26,23 @@ public class TowerManager : MonoBehaviour {
         Matches = new List<BlockList> ();
         MatchTimers = new List<IEnumerator> ();
         MergingManager.Tower = this;
+        SetPowerUp (new NormalPower (this));
     }
 
     private void Update () {
         if (RigidTower) {
             StiffenTower ();
         }
+        _powerUp.UpdateState ();
     }
 
     public void SetState (TowerState state) {
         StartCoroutine (state.Start ());
+    }
+
+    public void SetPowerUp (PowerUp powerUp) {
+        _powerUp = powerUp;
+        StartCoroutine (powerUp.InitializeState ());
     }
 
     // public void NewCheckForMatches () {
