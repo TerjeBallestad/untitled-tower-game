@@ -4,10 +4,15 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
+  - MergeList: {instanceID: 0}
   - RedMaterial: {fileID: 2100000, guid: 4a6fd2f8cd8174693916e430deff9f63, type: 2}
   - PurpleMaterial: {fileID: 2100000, guid: 39ebcff281e684db2914f9cdf064fcce, type: 2}
   - BlueMaterial: {fileID: 2100000, guid: 05f26a368172c40e2ad0bf043e189f7e, type: 2}
   - GreenMaterial: {fileID: 2100000, guid: 033891d8c6fcb4ee7b592e0a6fb47ed4, type: 2}
+  - BronzeMaterial: {fileID: 2100000, guid: f324ba787e6cc4e219e7c5551886cb4c, type: 2}
+  - SilverMaterial: {fileID: 2100000, guid: c3c6c2b6d7b9f4dea91c027ba3d8d8b2, type: 2}
+  - GoldMaterial: {fileID: 2100000, guid: 250f7cb3f7e7543439de81cc55d25eae, type: 2}
+  - DiamondMaterial: {fileID: 2100000, guid: 108b1ff076df64121a63b0c4ff99be19, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

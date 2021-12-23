@@ -126,12 +126,18 @@ public class TowerManager : MonoBehaviour {
             block.GetComponent<Rigidbody2D> ().AddForce (new Vector3 (-block.transform.position.x * 10, 0));
         }
     }
-    void SpawnBlock () {
+    void SpawnRandomBlockAtTop () {
         Block block = GetRandomBlock ();
         _blocks.Add (block);
         block.transform.SetPositionAndRotation (transform.position, Quaternion.identity);
         _lastBlockSpawnTime = Time.time;
         _blockCount++;
+    }
+
+    public void SpawnBlockTypeAtLocation (BlockType type, Vector3 position) {
+        Block block = _blockPool.Get ();
+        block.Setup (type, this);
+        block.transform.position = position;
     }
 
     bool AbleToSpawnBlock () {
@@ -140,7 +146,7 @@ public class TowerManager : MonoBehaviour {
     public IEnumerator BlockSpawner () {
         while (true) {
             yield return new WaitUntil (AbleToSpawnBlock);
-            SpawnBlock ();
+            SpawnRandomBlockAtTop ();
         }
     }
     public void EatBlock (Block block) {

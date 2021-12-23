@@ -11,6 +11,11 @@ public class Block : MonoBehaviour, IEatable {
     [SerializeField] private Material PurpleMaterial;
     [SerializeField] private Material BlueMaterial;
     [SerializeField] private Material GreenMaterial;
+    [SerializeField] private Material BronzeMaterial;
+    [SerializeField] private Material SilverMaterial;
+    [SerializeField] private Material GoldMaterial;
+    [SerializeField] private Material DiamondMaterial;
+
     private TowerManager Tower;
     private MeshRenderer MeshRenderer;
 
@@ -33,6 +38,18 @@ public class Block : MonoBehaviour, IEatable {
             case BlockType.blue:
                 MeshRenderer.material = BlueMaterial;
                 break;
+            case BlockType.bronze:
+                MeshRenderer.material = BronzeMaterial;
+                break;
+            case BlockType.silver:
+                MeshRenderer.material = SilverMaterial;
+                break;
+            case BlockType.gold:
+                MeshRenderer.material = GoldMaterial;
+                break;
+            case BlockType.diamond:
+                MeshRenderer.material = DiamondMaterial;
+                break;
             default:
                 Debug.Log (gameObject.name + " does not have a valid type");
                 break;
@@ -50,4 +67,8 @@ public enum BlockType {
     blue,
     red,
     green,
+    bronze,
+    silver,
+    gold,
+    diamond,
 }
