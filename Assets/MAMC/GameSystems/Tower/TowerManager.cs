@@ -25,10 +25,6 @@ public class TowerManager : MonoBehaviour {
         Matches = new List<BlockList> ();
         MatchTimers = new List<IEnumerator> ();
         MergingManager.Tower = this;
-        for (int i = 0; i < BlockDetectors.Count; i++) {
-            BlockList BL = gameObject.AddComponent<BlockList> ();
-            Matches.Add (BL);
-        }
     }
 
     private void Update () {

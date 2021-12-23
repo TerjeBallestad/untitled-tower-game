@@ -21,7 +21,6 @@ public class BlockList : MonoBehaviour {
         _mergerPool = mergerPool;
         AddUnique (origin);
         Count = Blocks.Count;
-        gameObject.name = origin.name + " Merger";
     }
     public void Clear () {
         foreach (var block in Blocks) {
@@ -39,11 +38,14 @@ public class BlockList : MonoBehaviour {
         block.MergeList = this;
         if (block.transform.position.y < Origin.transform.position.y) {
             Origin = block;
-            gameObject.name = Origin.name + " Merger";
+            gameObject.name = Count + Origin.name + " Merger";
         }
     }
     public bool AddUnique (Block block) {
         if (!Contains (block)) {
+            if (block.MergeList != null) {
+                block.MergeList.Remove (block);
+            }
             Add (block);
             return true;
         }
@@ -52,8 +54,9 @@ public class BlockList : MonoBehaviour {
 
     public void AddUniqueRange (BlockList list) {
 
+        if (list == this) return;
         foreach (var block in list.Blocks) {
-            Add (block);
+            AddUnique (block);
         }
         list.Clear ();
         // _mergerPool.ReturnToPool (list);
@@ -84,7 +87,7 @@ public class BlockList : MonoBehaviour {
             Count = Blocks.Count;
         } else if (Blocks.Count < 3) {
             StopAllCoroutines ();
-            // Clear ();
+            Clear ();
             // _mergerPool.ReturnToPool (this);
         }
     }
@@ -98,7 +101,7 @@ public class BlockList : MonoBehaviour {
         while (!TimeToMerge ()) {
             foreach (var block in Blocks) {
                 Rigidbody2D rb = block.GetComponent<Rigidbody2D> ();
-                rb.constraints = RigidbodyConstraints2D.FreezePosition;
+                // rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
             }
             Debug.Log ((MergeTime - Time.time));

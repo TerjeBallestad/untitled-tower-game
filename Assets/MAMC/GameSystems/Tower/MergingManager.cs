@@ -47,7 +47,6 @@ public class MergingManager : MonoBehaviour {
     }
 
     private bool TryAddToNeighbourList (Block block, int index) {
-
         int above = index + 1;
         int below = index - 1;
         if (above < _blocks.Length && _blocks[above] != null && _blocks[above].MergeList != null && _blocks[above].MergeList.Type == block.Type) {
@@ -73,26 +72,68 @@ public class MergingManager : MonoBehaviour {
 
     public void CheckForMatches () {
 
-        List<BlockList> matches = new List<BlockList> ();
         foreach (var detector in _blockDetectors) {
             detector.UpdateClosestBlock ();
         }
+        List<BlockList> matches = new List<BlockList> ();
+
+        int i = 0;
+
+        while (i < _blocks.Length) {
+            Block currentBlock = _blocks[i];
+            if (currentBlock == null) {
+                i++;
+                continue;
+            }
+            BlockList mergeList = null;
+            if (currentBlock.MergeList == null) {
+                mergeList = MergerPool.Get ();
+
+                mergeList.Setup (currentBlock, Tower, MergerPool);
+                matches.Add (mergeList);
+            } else mergeList = currentBlock.MergeList;
+            i++;
+            while (i < _blocks.Length) {
+                if (currentBlock.Type == _blocks[i]?.Type) {
+                    mergeList.AddUnique (_blocks[i]);
+                    i++;
+                } else break;
+            }
+        }
 
         // for (int i = 0; i < _blocks.Length; i++) {
+
         //     Block currentBlock = _blocks[i];
-        //     if (currentBlock == null) {
-        //         continue;
-        //     }
-        //     if (!matches.Contains (currentBlock.MergeList)) {
-        //         matches.Add (currentBlock.MergeList);
+        //     if (currentBlock == null) continue;
+
+        //     Block previous = (i - 1 > 0) ? _blocks[i - 1] : null;
+        //     Block next = (i + 1 < _blocks.Length) ? _blocks[i + 1] : null;
+
+        //     if (currentBlock.Type != previous?.Type) {
+        //         if (currentBlock.MergeList == null) {
+        //             BlockList mergeList = MergerPool.Get ();
+        //             mergeList.Setup (currentBlock, Tower, MergerPool);
+        //             Matches.Add (mergeList);
+        //         }
+        //     } else if (currentBlock.Type == previous?.Type) {
+        //         previous.MergeList.AddUnique (currentBlock);
+        //         previous.MergeList.gameObject.name = previous.MergeList.Count + " " + previous.MergeList.Origin.name + " Merger";
         //     }
 
-        // }
-        // foreach (var mergeList in matches) {
-        //     mergeList.TryMergeBlocks (3);
+        //     // Debug.Log ("previous: " + previous?.name + " Current: " + currentBlock?.name + " Next: " + next?.name);
 
         // }
-        // if (previousBlock == null || previousBlock.Type != currentBlock.Type) {
+
+        foreach (var mergeList in matches) {
+            mergeList.TryMergeBlocks (3);
+
+        }
+        // Block previous = null;
+        // Block next = null;
+        // int firstIndex = 0;
+        // int matchCount = 0;
+        // bool lastInSequence = false;
+        // if (previous == null || previous.Type != currentBlock.Type) {
         //     if (currentBlock.MergeList == null) {
         //         BlockList mergeList = MergerPool.Get ();
         //         mergeList.Setup (currentBlock.Type, Tower, MergerPool);
@@ -104,12 +145,6 @@ public class MergingManager : MonoBehaviour {
         //     previousBlock.MergeList.AddUnique (currentBlock);
         // }
         // previousBlock = currentBlock;
-
-        //     Block previous = null;
-        //     Block next = null;
-        //     int firstIndex = 0;
-        //     int matches = 0;
-        //     bool lastInSequence = false;
 
         //     for (int i = 0; i < _blocks.Length; i++) {
         //         // check if current block is not null

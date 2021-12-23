@@ -21,7 +21,7 @@ public class BlockDetector : MonoBehaviour {
                 if (distance < shortestDistance) {
                     shortestDistance = distance;
                     closest = c;
-                    Debug.Log (c.gameObject.name + " distance " + distance);
+                    // Debug.Log (c.gameObject.name + " distance " + distance);
                 }
             }
         } else if (result.Count > 0) {

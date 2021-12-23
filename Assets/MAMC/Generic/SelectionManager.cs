@@ -19,6 +19,7 @@ public class SelectionManager : MonoBehaviour {
         Touch touch = Input.GetTouch (0);
         Ray ray = Camera.main.ScreenPointToRay (touch.position);
         RaycastHit hit;
+        Debug.Log ("touching");
         if (Physics.Raycast (ray, out hit)) {
             var selection = hit.transform;
             if (_canSelect == true) {
