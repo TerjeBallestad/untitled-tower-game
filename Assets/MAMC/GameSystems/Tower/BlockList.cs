@@ -119,34 +119,6 @@ public class BlockList : MonoBehaviour {
     }
 
     private void SpawnMergedBlock () {
-        switch (Type) {
-            case BlockType.green:
-                Tower.SpawnBlockTypeAtLocation (BlockType.bronze, Origin.transform.position);
-                break;
-            case BlockType.purple:
-                Tower.SpawnBlockTypeAtLocation (BlockType.bronze, Origin.transform.position);
-                break;
-            case BlockType.red:
-                Tower.SpawnBlockTypeAtLocation (BlockType.bronze, Origin.transform.position);
-                break;
-            case BlockType.blue:
-                Tower.SpawnBlockTypeAtLocation (BlockType.bronze, Origin.transform.position);
-                break;
-            case BlockType.bronze:
-                Tower.SpawnBlockTypeAtLocation (BlockType.silver, Origin.transform.position);
-                break;
-            case BlockType.silver:
-                Tower.SpawnBlockTypeAtLocation (BlockType.gold, Origin.transform.position);
-                break;
-            case BlockType.gold:
-                Tower.SpawnBlockTypeAtLocation (BlockType.diamond, Origin.transform.position);
-                break;
-            case BlockType.diamond:
-                Tower.SpawnBlockTypeAtLocation (BlockType.diamond, Origin.transform.position);
-                break;
-            default:
-                Debug.Log (gameObject.name + " does not have a valid type");
-                break;
-        }
+        Tower.PowerUp.MergeBlocks (this);
     }
 }

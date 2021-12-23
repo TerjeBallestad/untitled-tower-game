@@ -8,7 +8,7 @@ public abstract class PowerUp {
         yield break;
     }
 
-    public virtual void MergeBlocks () {
+    public virtual void MergeBlocks (BlockList list) {
 
     }
 
