@@ -28,21 +28,11 @@ public class MergingManager : MonoBehaviour {
     }
 
     public void MoveBlockToIndex (Block block, int index) {
-        // if _blocks contains block, nullify
-        // for (int i = 0; i < _blocks.Length; i++) {
-        //     if (_blocks[i] == block) {
-        //         _blocks[i] = null;
-        //     }
-        // }
         if (block.index > 0) {
             _blocks[block.index] = null;
         }
         _blocks.SetValue (block, index);
         block.index = index;
-        // if (block.MergeList == null) {
-        //     MergerPool.Get ().Setup (block, Tower, MergerPool);
-        // }
-        // TryAddToNeighbourList (block, index);
         block.gameObject.name = index.ToString () + " - " + block.Type.ToString ();
     }
 
@@ -94,7 +84,7 @@ public class MergingManager : MonoBehaviour {
             i++;
             int j = i;
             while (j < _blocks.Length) {
-                // if the block is a special block (>3) && better block it is ignored and we skip to the next iteration
+                // if the block is a special block (>3) && (better block) it is ignored and we skip to the next iteration
                 // so that special blocks don't clog up to tower
                 if ((int?) _blocks[j]?.Type > 3 && ((int?) _blocks[j]?.Type > (int?) currentBlock.Type)) {
                     j++;

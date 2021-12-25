@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : MonoBehaviour, IEatable {
+public class Block : MonoBehaviour {
 
     public BlockType Type;
     public int index;
@@ -56,8 +56,8 @@ public class Block : MonoBehaviour, IEatable {
         }
     }
 
-    public void GetEaten () {
-        Tower.EatBlock (this);
+    public void GetEaten (Monster monster) {
+        Tower.EatBlock (monster, this);
     }
 
 }

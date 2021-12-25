@@ -27,7 +27,7 @@ public class TowerManager : MonoBehaviour {
         Matches = new List<BlockList> ();
         MatchTimers = new List<IEnumerator> ();
         MergingManager.Tower = this;
-        SetPowerUp (new DoubleBlock (this));
+        SetPowerUp (new NormalPower (this));
     }
 
     private void Update () {
@@ -42,6 +42,7 @@ public class TowerManager : MonoBehaviour {
     }
 
     public void SetPowerUp (PowerUp powerUp) {
+        StartCoroutine (powerUp.EndState ());
         _powerUp = powerUp;
         StartCoroutine (powerUp.InitializeState ());
     }
@@ -108,8 +109,41 @@ public class TowerManager : MonoBehaviour {
             SpawnRandomBlockAtTop ();
         }
     }
-    public void EatBlock (Block block) {
+    public void EatBlock (Monster monster, Block block) {
+        // If special block
+        if ((int) block.Type > 3) {
+            TriggerPowerUp (monster, block);
+        }
         DespawnBlock (block);
+    }
+
+    private void TriggerPowerUp (Monster monster, Block block) {
+        switch (monster.Type) {
+            case BlockType.green:
+                SetPowerUp (new DoubleBlock (this));
+                break;
+            case BlockType.purple:
+                SetPowerUp (new DoubleBlock (this));
+                break;
+            case BlockType.red:
+                SetPowerUp (new DoubleBlock (this));
+                break;
+            case BlockType.blue:
+                SetPowerUp (new DoubleBlock (this));
+                break;
+            default:
+                break;
+        }
+        if (block.Type == BlockType.bronze) PowerUpTimer (3);
+        else if (block.Type == BlockType.silver) PowerUpTimer (4);
+        else if (block.Type == BlockType.gold) PowerUpTimer (5);
+        else if (block.Type == BlockType.diamond) PowerUpTimer (6);
+
+    }
+
+    private IEnumerator PowerUpTimer (float seconds) {
+        yield return new WaitForSeconds (seconds);
+        SetPowerUp (new NormalPower (this));
     }
 
 }

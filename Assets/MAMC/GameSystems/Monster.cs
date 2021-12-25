@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Monster : MonoBehaviour {
-    [Range (1, 100)] public int Rage;
-    private BlockType _blockType;
+    private int _rage;
+    public BlockType Type;
+    private TowerManager _tower;
 
     private void Start () {
-        _blockType = BlockType.green;
+        _rage = 0;
+        Type = BlockType.green;
+        _tower = GameManager.Instance.TowerManager;
     }
 
     private void OnTriggerEnter2D (Collider2D other) {
-        other.GetComponent<IEatable> ().GetEaten ();
+        Block block = other.GetComponent<Block> ();
+        if (block == null) return;
+        if (block.Type != Type) {
+            _rage++;
+        } else {
+            _rage--;
+        }
+        block.GetEaten (this);
     }
+
 }
