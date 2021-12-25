@@ -88,15 +88,21 @@ public class MergingManager : MonoBehaviour {
             BlockList mergeList = null;
             if (currentBlock.MergeList == null) {
                 mergeList = MergerPool.Get ();
-
                 mergeList.Setup (currentBlock, Tower, MergerPool);
                 matches.Add (mergeList);
             } else mergeList = currentBlock.MergeList;
             i++;
-            while (i < _blocks.Length) {
-                if (currentBlock.Type == _blocks[i]?.Type) {
-                    mergeList.AddUnique (_blocks[i]);
-                    i++;
+            int j = i;
+            while (j < _blocks.Length) {
+                // if the block is a special block (>3) && better block it is ignored and we skip to the next iteration
+                // so that special blocks don't clog up to tower
+                if ((int?) _blocks[j]?.Type > 3 && ((int?) _blocks[j]?.Type > (int?) currentBlock.Type)) {
+                    j++;
+                    continue;
+                }
+                if (currentBlock.Type == _blocks[j]?.Type) {
+                    mergeList.AddUnique (_blocks[j]);
+                    j++;
                 } else break;
             }
         }

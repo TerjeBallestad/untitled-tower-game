@@ -10,7 +10,7 @@ public class NormalPower : PowerUp {
     public override void MergeBlocks (BlockList list) {
         base.MergeBlocks (list);
 
-        int amountToSpawn = Mathf.FloorToInt (list.Count % 3);
+        int amountToSpawn = Mathf.FloorToInt (list.Count / 3);
         switch (list.Type) {
             case BlockType.green:
                 Tower.SpawnBlockTypeAtLocation (BlockType.bronze, list.Origin.transform.position, amountToSpawn);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Monster : MonoBehaviour {
-
+    [Range (1, 100)] public int Rage;
     private BlockType _blockType;
 
     private void Start () {

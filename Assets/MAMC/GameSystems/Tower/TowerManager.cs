@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class TowerManager : MonoBehaviour {
-    [SerializeField] public int TargetBlockCount { get; private set; } = 10;
+    [SerializeField] private int _targetBlockCount = 10;
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private float _matchTime = 3f;
     [SerializeField] private MergingManager MergingManager;
@@ -95,11 +95,12 @@ public class TowerManager : MonoBehaviour {
             Block block = _blockPool.Get ();
             block.Setup (type, this);
             block.transform.position = new Vector3 (position.x, position.y + (i * block.transform.localScale.y), position.z);
+            _blockCount++;
         }
     }
 
     bool AbleToSpawnBlock () {
-        return _blockCount < TargetBlockCount && Time.time - _lastBlockSpawnTime > _spawnInterval;
+        return _blockCount < _targetBlockCount && Time.time - _lastBlockSpawnTime > _spawnInterval;
     }
     public IEnumerator BlockSpawner () {
         while (true) {
