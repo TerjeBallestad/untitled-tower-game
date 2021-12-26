@@ -7,16 +7,15 @@ public class TowerManager : MonoBehaviour {
     [SerializeField] private int _targetBlockCount = 10;
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private float _matchTime = 3f;
+    [SerializeField] private float _bronzePowerTime = 5, _silverPowerTime = 10, _goldPowerTime = 15, _diamondPowerTime = 20;
     [SerializeField] private MergingManager MergingManager;
     private BlockPool _blockPool;
     [SerializeField] private List<Block> _blocks;
     private int _similarSpawns;
     private BlockType _previousSpawn;
-    public bool RigidTower = true;
+    public bool RigidTower;
     private int _blockCount;
     private float _lastBlockSpawnTime;
-    public List<BlockList> Matches;
-    public List<IEnumerator> MatchTimers;
     public List<BlockDetector> BlockDetectors;
     private PowerUp _powerUp;
     public PowerUp PowerUp { get { return _powerUp; } private set { _powerUp = value; } }
@@ -24,8 +23,6 @@ public class TowerManager : MonoBehaviour {
     private void Start () {
         _blockPool = GetComponent<BlockPool> ();
         _blocks = new List<Block> ();
-        Matches = new List<BlockList> ();
-        MatchTimers = new List<IEnumerator> ();
         MergingManager.Tower = this;
         SetPowerUp (new NormalPower (this));
     }
@@ -44,6 +41,7 @@ public class TowerManager : MonoBehaviour {
     public void SetPowerUp (PowerUp powerUp) {
         StartCoroutine (powerUp.EndState ());
         _powerUp = powerUp;
+        Debug.Log ("new power up is " + powerUp);
         StartCoroutine (powerUp.InitializeState ());
     }
 
@@ -134,14 +132,15 @@ public class TowerManager : MonoBehaviour {
             default:
                 break;
         }
-        if (block.Type == BlockType.bronze) PowerUpTimer (3);
-        else if (block.Type == BlockType.silver) PowerUpTimer (4);
-        else if (block.Type == BlockType.gold) PowerUpTimer (5);
-        else if (block.Type == BlockType.diamond) PowerUpTimer (6);
+        if (block.Type == BlockType.bronze) StartCoroutine (PowerUpTimer (_bronzePowerTime));
+        else if (block.Type == BlockType.silver) StartCoroutine (PowerUpTimer (_silverPowerTime));
+        else if (block.Type == BlockType.gold) StartCoroutine (PowerUpTimer (_goldPowerTime));
+        else if (block.Type == BlockType.diamond) StartCoroutine (PowerUpTimer (_diamondPowerTime));
 
     }
 
     private IEnumerator PowerUpTimer (float seconds) {
+        Debug.Log (seconds);
         yield return new WaitForSeconds (seconds);
         SetPowerUp (new NormalPower (this));
     }
