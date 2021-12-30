@@ -113,6 +113,7 @@ public class BlockList : MonoBehaviour {
             Tower.DespawnBlock (block);
 
         }
+        Tower.HandleMonsterSwitching (Type);
         SpawnMergedBlock ();
         Clear ();
         // _mergerPool.ReturnToPool (this);

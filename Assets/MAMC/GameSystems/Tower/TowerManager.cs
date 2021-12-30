@@ -26,6 +26,7 @@ public class TowerManager : MonoBehaviour {
         _blockPool = GetComponent<BlockPool> ();
         _blocks = new List<Block> ();
         _mergingManager.Tower = this;
+        SpawnTwoRandomMonsters ();
         SetPowerUp (new NormalPower (this));
     }
 
@@ -150,8 +151,31 @@ public class TowerManager : MonoBehaviour {
         SetPowerUp (new NormalPower (this));
     }
 
-    private void SwitchMonster (BlockType type) {
+    private void SpawnTwoRandomMonsters () {
+        BlockType monster1 = (BlockType) Random.Range (0, 4);
+        BlockType monster2 = ExclusiveRandomBlockType (monster1);
+        _lefMonster.Setup (monster1);
+        _rightMonster.Setup (monster2);
+    }
 
+    public void HandleMonsterSwitching (BlockType newType) {
+        if (_lefMonster.Type == newType) {
+            _lefMonster.Setup (ExclusiveRandomBlockType (newType, _rightMonster.Type));
+        } else if (_rightMonster.Type == newType) {
+            _rightMonster.Setup (ExclusiveRandomBlockType (newType, _lefMonster.Type));
+        }
+    }
+    private BlockType ExclusiveRandomBlockType (BlockType excludeType, BlockType excludedType2 = BlockType.bronze) {
+        List<BlockType> types = new List<BlockType> ();
+
+        for (int i = 0; i < 4; i++) {
+            if ((BlockType) i != excludeType && (BlockType) i != excludedType2) {
+                Debug.Log ((BlockType) i);
+                types.Add ((BlockType) i);
+            }
+        }
+        int j = Random.Range (0, types.Count);
+        return types[j];
     }
 
 }
