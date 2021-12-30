@@ -7,6 +7,7 @@ public class Block : MonoBehaviour {
     public BlockType Type;
     public int index;
     public BlockList MergeList;
+    public Vector3 refVelocity;
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
     [SerializeField] private Material BlueMaterial;
@@ -23,7 +24,7 @@ public class Block : MonoBehaviour {
         Type = type;
         Tower = tower;
         index = -1;
-        MeshRenderer = GetComponent<MeshRenderer> ();
+        MeshRenderer = transform.GetChild (1).GetComponent<MeshRenderer> ();
 
         switch (Type) {
             case BlockType.green:
@@ -58,6 +59,19 @@ public class Block : MonoBehaviour {
 
     public void GetEaten (Monster monster) {
         Tower.EatBlock (monster, this);
+    }
+
+    public static BlockType ExclusiveRandomBlockType (BlockType excludeType, BlockType excludedType2 = BlockType.bronze) {
+        List<BlockType> types = new List<BlockType> ();
+
+        for (int i = 0; i < 4; i++) {
+            BlockType current = (BlockType) i;
+            if (current != excludeType && current != excludedType2) {
+                types.Add (current);
+            }
+        }
+        int r = Random.Range (0, types.Count);
+        return types[r];
     }
 
 }

@@ -98,10 +98,16 @@ public class BlockList : MonoBehaviour {
 
     private IEnumerator MergeBlocks () {
         var instruction = new WaitForEndOfFrame ();
+        Debug.Log ("starting coroutine");
+        StartCoroutine (Tower.CenterBlocksSlightly ());
         while (!TimeToMerge ()) {
             foreach (var block in Blocks) {
                 Rigidbody2D rb = block.GetComponent<Rigidbody2D> ();
-                // rb.constraints = RigidbodyConstraints2D.FreezePosition;
+                block.transform.rotation = Quaternion.identity;
+                Vector3 target = block.transform.position;
+                target.x = 0;
+
+                block.transform.position = Vector3.MoveTowards (block.transform.position, target, 0.005f);
             }
 
             // Debug.Log ((MergeTime - Time.time));

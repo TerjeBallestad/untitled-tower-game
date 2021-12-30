@@ -9,9 +9,10 @@ public class TowerManager : MonoBehaviour {
     [SerializeField] private float _matchTime = 3f;
     [SerializeField] private float _bronzePowerTime = 5, _silverPowerTime = 10, _goldPowerTime = 15, _diamondPowerTime = 20;
     [SerializeField] private MergingManager _mergingManager;
+    [HideInInspector] public MergingManager MergingManager { get { return _mergingManager; } private set { _mergingManager = value; } }
+
     [SerializeField] private Monster _rightMonster, _lefMonster;
     public ProgressBar progressBar;
-    public List<BlockDetector> BlockDetectors;
     private List<Block> _blocks;
     private BlockPool _blockPool;
     private int _similarSpawns;
@@ -86,6 +87,28 @@ public class TowerManager : MonoBehaviour {
             block.GetComponent<Rigidbody2D> ().AddForce (new Vector3 (-block.transform.position.x * 10, 0));
         }
     }
+
+    public IEnumerator CenterBlocksSlightly () {
+        float end = Time.time + 0.4f;
+        var instruction = new WaitForEndOfFrame ();
+        while (end > Time.time) {
+
+            foreach (var block in _blocks) {
+                if (block.index < 0) continue;
+                Debug.Log ("second " + block.name);
+                Vector3 target = block.transform.position;
+                target.x = 0;
+                // Vector3 target = _mergingManager.BlockDetectors[block.index].transform.position;
+                // Vector3 heading = (_mergingManager.BlockDetectors[block.index].transform.position - block.transform.position);
+                // Vector3 direction = heading / heading.magnitude;
+                // Debug.Log (direction);
+                block.transform.rotation = Quaternion.identity;
+                block.transform.position = Vector3.MoveTowards (block.transform.position, target, 0.005f);
+            }
+            Debug.Log ("Yield return new waitrfoanendofframe ");
+            yield return instruction;
+        }
+    }
     void SpawnRandomBlockAtTop () {
         Block block = GetRandomBlock ();
         _blocks.Add (block);
@@ -153,29 +176,17 @@ public class TowerManager : MonoBehaviour {
 
     private void SpawnTwoRandomMonsters () {
         BlockType monster1 = (BlockType) Random.Range (0, 4);
-        BlockType monster2 = ExclusiveRandomBlockType (monster1);
+        BlockType monster2 = Block.ExclusiveRandomBlockType (monster1);
         _lefMonster.Setup (monster1);
         _rightMonster.Setup (monster2);
     }
 
     public void HandleMonsterSwitching (BlockType newType) {
         if (_lefMonster.Type == newType) {
-            _lefMonster.Setup (ExclusiveRandomBlockType (newType, _rightMonster.Type));
+            _lefMonster.Setup (Block.ExclusiveRandomBlockType (newType, _rightMonster.Type));
         } else if (_rightMonster.Type == newType) {
-            _rightMonster.Setup (ExclusiveRandomBlockType (newType, _lefMonster.Type));
+            _rightMonster.Setup (Block.ExclusiveRandomBlockType (newType, _lefMonster.Type));
         }
-    }
-    private BlockType ExclusiveRandomBlockType (BlockType excludeType, BlockType excludedType2 = BlockType.bronze) {
-        List<BlockType> types = new List<BlockType> ();
-
-        for (int i = 0; i < 4; i++) {
-            if ((BlockType) i != excludeType && (BlockType) i != excludedType2) {
-                Debug.Log ((BlockType) i);
-                types.Add ((BlockType) i);
-            }
-        }
-        int j = Random.Range (0, types.Count);
-        return types[j];
     }
 
 }
