@@ -5,18 +5,18 @@ using UnityEngine;
 public class Monster : MonoBehaviour {
     public BlockType Type { get; private set; }
 
-    [SerializeField] private Material RedMaterial;
-    [SerializeField] private Material PurpleMaterial;
-    [SerializeField] private Material BlueMaterial;
-    [SerializeField] private Material GreenMaterial;
+    [SerializeField] private Sprite RedSprite;
+    [SerializeField] private Sprite PurpleSprite;
+    [SerializeField] private Sprite BlueSprite;
+    [SerializeField] private Sprite GreenSprite;
     private int _rage;
-    private MeshRenderer _meshRenderer;
+    private SpriteRenderer _spriteRenderer;
     private TowerManager _tower;
 
     private void Start () {
         _rage = 0;
         _tower = GameManager.Instance.TowerManager;
-        _meshRenderer = GetComponent<MeshRenderer> ();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer> ();
         Setup (BlockType.green);
     }
 
@@ -24,16 +24,16 @@ public class Monster : MonoBehaviour {
         Type = type;
         switch (Type) {
             case BlockType.green:
-                _meshRenderer.material = GreenMaterial;
+                _spriteRenderer.sprite = GreenSprite;
                 break;
             case BlockType.purple:
-                _meshRenderer.material = PurpleMaterial;
+                _spriteRenderer.sprite = PurpleSprite;
                 break;
             case BlockType.red:
-                _meshRenderer.material = RedMaterial;
+                _spriteRenderer.sprite = RedSprite;
                 break;
             case BlockType.blue:
-                _meshRenderer.material = BlueMaterial;
+                _spriteRenderer.sprite = BlueSprite;
                 break;
             default:
                 break;

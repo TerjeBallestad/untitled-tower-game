@@ -33,7 +33,7 @@ public class SelectionManager : MonoBehaviour {
 
                 DeltaVector += touch.deltaPosition * 0.02f;
                 Vector3 MovementVector = initialTouchPosition;
-                MovementVector.x += -DeltaVector.x;
+                MovementVector.x += DeltaVector.x;
                 MovementVector.y += DeltaVector.y;
 
                 SelectedBlock.transform.position = MovementVector;

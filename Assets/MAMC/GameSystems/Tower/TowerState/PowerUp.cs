@@ -1,6 +1,9 @@
 using System.Collections;
 public abstract class PowerUp {
     protected TowerManager Tower;
+    protected float maxTimeRemaining;
+    protected float currentTimeRemaining;
+
     public PowerUp (TowerManager tower) {
         Tower = tower;
     }
@@ -17,5 +20,9 @@ public abstract class PowerUp {
     }
     public virtual IEnumerator EndState () {
         yield break;
+    }
+    public void SetTimers (float time) {
+        maxTimeRemaining = time;
+        currentTimeRemaining = time;
     }
 }

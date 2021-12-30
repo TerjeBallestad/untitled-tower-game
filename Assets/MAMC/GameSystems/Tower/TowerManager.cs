@@ -8,22 +8,24 @@ public class TowerManager : MonoBehaviour {
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private float _matchTime = 3f;
     [SerializeField] private float _bronzePowerTime = 5, _silverPowerTime = 10, _goldPowerTime = 15, _diamondPowerTime = 20;
-    [SerializeField] private MergingManager MergingManager;
+    [SerializeField] private MergingManager _mergingManager;
+    [SerializeField] private Monster _rightMonster, _lefMonster;
+    public ProgressBar progressBar;
+    public List<BlockDetector> BlockDetectors;
+    private List<Block> _blocks;
     private BlockPool _blockPool;
-    [SerializeField] private List<Block> _blocks;
     private int _similarSpawns;
     private BlockType _previousSpawn;
     public bool RigidTower;
     private int _blockCount;
     private float _lastBlockSpawnTime;
-    public List<BlockDetector> BlockDetectors;
     private PowerUp _powerUp;
     public PowerUp PowerUp { get { return _powerUp; } private set { _powerUp = value; } }
 
     private void Start () {
         _blockPool = GetComponent<BlockPool> ();
         _blocks = new List<Block> ();
-        MergingManager.Tower = this;
+        _mergingManager.Tower = this;
         SetPowerUp (new NormalPower (this));
     }
 
@@ -39,10 +41,12 @@ public class TowerManager : MonoBehaviour {
     }
 
     public void SetPowerUp (PowerUp powerUp) {
-        StartCoroutine (powerUp.EndState ());
+        if (_powerUp != null) {
+            StartCoroutine (_powerUp.EndState ());
+        }
         _powerUp = powerUp;
         Debug.Log ("new power up is " + powerUp);
-        StartCoroutine (powerUp.InitializeState ());
+        StartCoroutine (_powerUp.InitializeState ());
     }
 
     public Block GetRandomBlock () {
@@ -70,7 +74,7 @@ public class TowerManager : MonoBehaviour {
 
     public void DespawnBlock (Block block) {
         if (block.index >= 0)
-            MergingManager._blocks[block.index] = null;
+            _mergingManager._blocks[block.index] = null;
         _blocks.Remove (block);
         _blockPool.ReturnToPool (block);
         _blockCount--;
@@ -84,7 +88,7 @@ public class TowerManager : MonoBehaviour {
     void SpawnRandomBlockAtTop () {
         Block block = GetRandomBlock ();
         _blocks.Add (block);
-        block.transform.SetPositionAndRotation (transform.position, Quaternion.identity);
+        block.transform.SetPositionAndRotation (transform.position, transform.rotation);
         _lastBlockSpawnTime = Time.time;
         _blockCount++;
     }
@@ -140,9 +144,14 @@ public class TowerManager : MonoBehaviour {
     }
 
     private IEnumerator PowerUpTimer (float seconds) {
-        Debug.Log (seconds);
+        progressBar.gameObject.SetActive (true);
+        _powerUp.SetTimers (seconds);
         yield return new WaitForSeconds (seconds);
         SetPowerUp (new NormalPower (this));
+    }
+
+    private void SwitchMonster (BlockType type) {
+
     }
 
 }

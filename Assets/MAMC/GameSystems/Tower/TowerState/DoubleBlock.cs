@@ -41,7 +41,9 @@ public class DoubleBlock : PowerUp {
         }
     }
     public override void UpdateState () {
-        base.UpdateState ();
+        currentTimeRemaining = currentTimeRemaining -= Time.deltaTime;
+        if (currentTimeRemaining < 0) Tower.progressBar.gameObject.SetActive (false);
+        else Tower.progressBar.UpdateCurrentFill (maxTimeRemaining, currentTimeRemaining, Color.green);
     }
     public override IEnumerator EndState () {
         return base.EndState ();
