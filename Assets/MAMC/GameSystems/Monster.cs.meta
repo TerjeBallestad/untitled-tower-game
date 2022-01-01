@@ -4,10 +4,15 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - RedMaterial: {fileID: 2100000, guid: 4a6fd2f8cd8174693916e430deff9f63, type: 2}
-  - PurpleMaterial: {fileID: 2100000, guid: 39ebcff281e684db2914f9cdf064fcce, type: 2}
-  - BlueMaterial: {fileID: 2100000, guid: 05f26a368172c40e2ad0bf043e189f7e, type: 2}
-  - GreenMaterial: {fileID: 2100000, guid: 033891d8c6fcb4ee7b592e0a6fb47ed4, type: 2}
+  - _redSprite: {fileID: 3286163911610860551, guid: 5ce725d1dbb7243939d54ffb50a14306,
+      type: 3}
+  - _purpleSprite: {fileID: 3286163911610860551, guid: 74db7728e50234fbca75191debf25ae2,
+      type: 3}
+  - _blueSprite: {fileID: 3286163911610860551, guid: 6674c5b7cc6284ecf8f703247d7645a0,
+      type: 3}
+  - _greenSprite: {fileID: 3286163911610860551, guid: 22e53056b02c743279aee78a2cc71365,
+      type: 3}
+  - _rageBar: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
