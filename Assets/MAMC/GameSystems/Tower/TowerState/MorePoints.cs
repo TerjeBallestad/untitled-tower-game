@@ -1,15 +1,19 @@
 using System.Collections;
 using UnityEngine;
-public class SlowMo : NormalPower {
+public class MorePoints : NormalPower {
+    public float Factor = 10f;
 
-    public SlowMo (TowerManager tower) : base (tower) { }
+    public MorePoints (TowerManager tower) : base (tower) { }
 
     public override IEnumerator InitializeState () {
-        Time.timeScale = 0.6f;
         return base.InitializeState ();
     }
+    public override void MergeBlocks (BlockList list) {
+        base.MergeBlocks (list);
+        // points = points * factor
+
+    }
     public override IEnumerator EndState () {
-        Time.timeScale = 1f;
         return base.EndState ();
     }
     public override void UpdateState () {
