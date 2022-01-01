@@ -1,22 +1,19 @@
 using System.Collections;
 using UnityEngine;
-public class SolidTower : NormalPower {
+public class Slowmo : NormalPower {
     public float Strength = 10f;
 
-    public SolidTower (TowerManager tower) : base (tower) { }
+    public Slowmo (TowerManager tower) : base (tower) { }
 
     public override IEnumerator InitializeState () {
+        Time.timeScale = 0.6f;
         return base.InitializeState ();
     }
     public override IEnumerator EndState () {
+        Time.timeScale = 1f;
         return base.EndState ();
     }
     public override void UpdateState () {
         base.UpdateState ();
-        foreach (var block in Tower.Blocks) {
-            Debug.Log (block.name);
-            block.GetComponent<Rigidbody2D> ().AddForce (new Vector3 (-block.transform.position.x * Strength, 0));
-
-        }
     }
 }

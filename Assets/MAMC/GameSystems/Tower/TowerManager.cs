@@ -141,7 +141,7 @@ public class TowerManager : MonoBehaviour {
                 SetPowerUp (new SolidTower (this));
                 break;
             case BlockType.red:
-                SetPowerUp (new DoubleBlock (this));
+                SetPowerUp (new Slowmo (this));
                 break;
             case BlockType.blue:
                 SetPowerUp (new DoubleBlock (this));
