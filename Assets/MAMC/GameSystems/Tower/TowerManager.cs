@@ -27,7 +27,7 @@ public class TowerManager : MonoBehaviour {
         _blockPool = GetComponent<BlockPool> ();
         _blocks = new List<Block> ();
         _mergingManager.Tower = this;
-        SpawnTwoRandomMonsters ();
+        SetTwoRandomMonsters ();
         SetPowerUp (new NormalPower (this));
     }
 
@@ -93,7 +93,7 @@ public class TowerManager : MonoBehaviour {
                 // Vector3 direction = heading / heading.magnitude;
                 // Debug.Log (direction);
                 block.transform.rotation = Quaternion.identity;
-                block.transform.position = Vector3.MoveTowards (block.transform.position, target, 0.005f);
+                block.transform.position = Vector3.MoveTowards (block.transform.position, target, 0.004f);
             }
             yield return instruction;
         }
@@ -110,7 +110,9 @@ public class TowerManager : MonoBehaviour {
         for (int i = 0; i < amount; i++) {
             Block block = _blockPool.Get ();
             block.Setup (type, this);
+            block.index = 0; // or else it triggers game over if spawning on bottom
             block.transform.position = new Vector3 (position.x, position.y + (i * block.transform.localScale.y), position.z);
+            _blocks.Add (block);
             _blockCount++;
         }
     }
@@ -163,7 +165,7 @@ public class TowerManager : MonoBehaviour {
         SetPowerUp (new NormalPower (this));
     }
 
-    private void SpawnTwoRandomMonsters () {
+    public void SetTwoRandomMonsters () {
         BlockType monster1 = (BlockType) Random.Range (0, 4);
         BlockType monster2 = Block.ExclusiveRandomBlockType (monster1);
         _lefMonster.Setup (monster1);
@@ -176,6 +178,16 @@ public class TowerManager : MonoBehaviour {
         } else if (_rightMonster.Type == newType) {
             _rightMonster.Setup (Block.ExclusiveRandomBlockType (newType, _lefMonster.Type));
         }
+    }
+
+    public void DespawnAllBlocks () {
+        foreach (var block in _blocks) {
+            if (block.index >= 0)
+                _mergingManager._blocks[block.index] = null;
+            _blockPool.ReturnToPool (block);
+            _blockCount--;
+        }
+        _blocks.Clear ();
     }
 
 }

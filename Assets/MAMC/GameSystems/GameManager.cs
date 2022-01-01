@@ -25,6 +25,14 @@ public class GameManager : MonoBehaviour {
 
     public void EndGame () {
         _gameOverMenu.SetActive (true);
+        TowerManager.StopAllCoroutines ();
+    }
+
+    public void StartNewGame () {
+        TowerManager.DespawnAllBlocks ();
+        TowerManager.SetTwoRandomMonsters ();
+        StartCoroutine (TowerManager.BlockSpawner ());
+        _gameOverMenu.SetActive (false);
     }
 
 }
