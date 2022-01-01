@@ -14,10 +14,10 @@ public class TowerManager : MonoBehaviour {
     [SerializeField] private Monster _rightMonster, _lefMonster;
     public ProgressBar progressBar;
     private List<Block> _blocks;
+    public List<Block> Blocks { get { return _blocks; } private set { _blocks = value; } }
     private BlockPool _blockPool;
     private int _similarSpawns;
     private BlockType _previousSpawn;
-    public bool RigidTower;
     private int _blockCount;
     private float _lastBlockSpawnTime;
     private PowerUp _powerUp;
@@ -32,9 +32,6 @@ public class TowerManager : MonoBehaviour {
     }
 
     private void Update () {
-        if (RigidTower) {
-            StiffenTower ();
-        }
         _powerUp.UpdateState ();
     }
 
@@ -82,12 +79,6 @@ public class TowerManager : MonoBehaviour {
         _blockCount--;
     }
 
-    public void StiffenTower () {
-        foreach (var block in _blocks) {
-            block.GetComponent<Rigidbody2D> ().AddForce (new Vector3 (-block.transform.position.x * 10, 0));
-        }
-    }
-
     public IEnumerator CenterBlocksSlightly () {
         float end = Time.time + 0.4f;
         var instruction = new WaitForEndOfFrame ();
@@ -95,7 +86,6 @@ public class TowerManager : MonoBehaviour {
 
             foreach (var block in _blocks) {
                 if (block.index < 0) continue;
-                Debug.Log ("second " + block.name);
                 Vector3 target = block.transform.position;
                 target.x = 0;
                 // Vector3 target = _mergingManager.BlockDetectors[block.index].transform.position;
@@ -105,7 +95,6 @@ public class TowerManager : MonoBehaviour {
                 block.transform.rotation = Quaternion.identity;
                 block.transform.position = Vector3.MoveTowards (block.transform.position, target, 0.005f);
             }
-            Debug.Log ("Yield return new waitrfoanendofframe ");
             yield return instruction;
         }
     }
@@ -149,7 +138,7 @@ public class TowerManager : MonoBehaviour {
                 SetPowerUp (new DoubleBlock (this));
                 break;
             case BlockType.purple:
-                SetPowerUp (new DoubleBlock (this));
+                SetPowerUp (new SolidTower (this));
                 break;
             case BlockType.red:
                 SetPowerUp (new DoubleBlock (this));
