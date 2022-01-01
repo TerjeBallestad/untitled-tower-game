@@ -8,6 +8,7 @@ public class Block : MonoBehaviour {
     public int index;
     public BlockList MergeList;
     public bool BeingTouched;
+    [HideInInspector] public Vector3 InitialPosition; // Used for shaking from Monster.cs
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
     [SerializeField] private Material BlueMaterial;
