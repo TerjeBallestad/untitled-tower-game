@@ -85,4 +85,11 @@ public enum BlockType {
     silver,
     gold,
     diamond,
+    coin,
+    time,
+    multiplier,
+    brick,
+    bomb,
+    acid,
+    increaseMergeQuality,
 }

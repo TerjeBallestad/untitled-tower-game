@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField] private GameObject CondoPrefab;
     private static GameManager instance;
-    private SelectionManager SelectionManager;
+    private TouchManager TouchManager;
     public TowerManager TowerManager;
 
     // Singleton instantiation
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
     }
 
     void Start () {
-        SelectionManager = GetComponent<SelectionManager> ();
+        TouchManager = GetComponent<TouchManager> ();
         TowerManager = GetComponent<TowerManager> ();
         StartCoroutine (TowerManager.BlockSpawner ());
     }

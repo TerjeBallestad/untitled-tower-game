@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectionManager : MonoBehaviour {
+public class TouchManager : MonoBehaviour {
 
     public Block SelectedBlock;
     public Vector3 initialTouchPosition;

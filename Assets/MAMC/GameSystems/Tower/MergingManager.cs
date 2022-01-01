@@ -6,8 +6,8 @@ public class MergingManager : MonoBehaviour {
     [HideInInspector] public TowerManager Tower;
     public BlockMergerPool MergerPool { get; private set; }
     private List<BlockDetector> _blockDetectors;
-    public Block[] _blocks;
     public List<BlockDetector> BlockDetectors { get { return _blockDetectors; } private set { _blockDetectors = value; } }
+    public Block[] _blocks;
 
     void Start () {
         MergerPool = GetComponent<BlockMergerPool> ();
