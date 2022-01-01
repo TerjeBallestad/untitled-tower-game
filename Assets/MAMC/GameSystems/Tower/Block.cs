@@ -7,7 +7,7 @@ public class Block : MonoBehaviour {
     public BlockType Type;
     public int index;
     public BlockList MergeList;
-    public Vector3 refVelocity;
+    public bool BeingTouched;
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
     [SerializeField] private Material BlueMaterial;
@@ -16,7 +16,6 @@ public class Block : MonoBehaviour {
     [SerializeField] private Material SilverMaterial;
     [SerializeField] private Material GoldMaterial;
     [SerializeField] private Material DiamondMaterial;
-
     private TowerManager Tower;
     private MeshRenderer MeshRenderer;
 
@@ -24,6 +23,7 @@ public class Block : MonoBehaviour {
         Type = type;
         Tower = tower;
         index = -1;
+        BeingTouched = false;
         MeshRenderer = transform.GetChild (1).GetComponent<MeshRenderer> ();
 
         switch (Type) {
@@ -59,6 +59,12 @@ public class Block : MonoBehaviour {
 
     public void GetEaten (Monster monster) {
         Tower.EatBlock (monster, this);
+    }
+
+    private void OnCollisionEnter2D (Collision2D other) {
+        if (!BeingTouched && index != 0 && other.gameObject.CompareTag ("ground")) {
+            GameManager.Instance.EndGame ();
+        }
     }
 
     public static BlockType ExclusiveRandomBlockType (BlockType excludeType, BlockType excludedType2 = BlockType.bronze) {

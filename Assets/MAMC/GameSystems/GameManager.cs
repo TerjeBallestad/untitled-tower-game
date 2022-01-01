@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    [SerializeField] private GameObject CondoPrefab;
+    [SerializeField] private GameObject _gameOverMenu;
     private static GameManager instance;
     private TouchManager TouchManager;
-    public TowerManager TowerManager;
+    [HideInInspector] public TowerManager TowerManager;
 
     // Singleton instantiation
     public static GameManager Instance {
@@ -21,6 +21,10 @@ public class GameManager : MonoBehaviour {
         TouchManager = GetComponent<TouchManager> ();
         TowerManager = GetComponent<TowerManager> ();
         StartCoroutine (TowerManager.BlockSpawner ());
+    }
+
+    public void EndGame () {
+        _gameOverMenu.SetActive (true);
     }
 
 }

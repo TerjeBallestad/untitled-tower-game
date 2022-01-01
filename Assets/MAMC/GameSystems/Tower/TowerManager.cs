@@ -6,7 +6,7 @@ using UnityEngine;
 public class TowerManager : MonoBehaviour {
     [SerializeField] private int _targetBlockCount = 10;
     [SerializeField] private float _spawnInterval = 2f;
-    [SerializeField] private float _matchTime = 3f;
+    [SerializeField] private float _matchTime = 2f;
     [SerializeField] private float _bronzePowerTime = 5, _silverPowerTime = 10, _goldPowerTime = 15, _diamondPowerTime = 20;
     [SerializeField] private MergingManager _mergingManager;
     [HideInInspector] public MergingManager MergingManager { get { return _mergingManager; } private set { _mergingManager = value; } }

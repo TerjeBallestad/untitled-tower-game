@@ -26,22 +26,24 @@ public class TouchManager : MonoBehaviour {
                 SelectedBlock = selection.GetComponentInParent<Block> ();
             }
             if (SelectedBlock != null) {
+                SelectedBlock.BeingTouched = true;
                 if (touch.phase == TouchPhase.Began) {
                     initialTouchPosition = SelectedBlock.transform.position;
                     _canSelect = false;
                 }
-
                 DeltaVector += touch.deltaPosition * 0.02f;
                 Vector3 MovementVector = initialTouchPosition;
                 MovementVector.x += DeltaVector.x;
                 MovementVector.y += DeltaVector.y;
-
                 SelectedBlock.transform.position = MovementVector;
                 // Debug.Log (DeltaVector);
                 if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
-                    SelectedBlock.GetComponent<Rigidbody2D> ().AddForce ((SelectedBlock.transform.position - previousPosition) * 100, ForceMode2D.Impulse);
+                    if (SelectedBlock != null) {
+                        SelectedBlock.GetComponent<Rigidbody2D> ().AddForce ((SelectedBlock.transform.position - previousPosition) * 100, ForceMode2D.Impulse);
+                        SelectedBlock.BeingTouched = false;
+                        SelectedBlock = null;
+                    }
                     DeltaVector = Vector3.zero;
-                    SelectedBlock = null;
                     _canSelect = true;
                 }
             } else {

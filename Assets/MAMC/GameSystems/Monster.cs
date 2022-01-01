@@ -42,7 +42,8 @@ public class Monster : MonoBehaviour {
 
     private void OnTriggerEnter2D (Collider2D other) {
         Block block = other.GetComponent<Block> ();
-        if (block == null) return;
+        if (block == null || block.BeingTouched == false) return;
+
         if (block.Type != Type) {
             _rage++;
         } else {
