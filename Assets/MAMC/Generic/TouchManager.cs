@@ -8,11 +8,25 @@ public class TouchManager : MonoBehaviour {
     public Vector3 initialTouchPosition;
     private Transform _selection;
     private bool _canSelect = true;
+    private bool _touchDisabled;
     private Vector2 DeltaVector;
     private Vector3 previousPosition;
 
+    private void Start () {
+        GameManager.Instance.OnGameOver += DisableTouchInput;
+        GameManager.Instance.OnGameBegin += EnableTouchInput;
+    }
+
+    private void DisableTouchInput () {
+        _touchDisabled = true;
+    }
+
+    private void EnableTouchInput () {
+        _touchDisabled = false;
+    }
+
     void Update () {
-        if (Input.touchCount < 1) {
+        if (_touchDisabled || Input.touchCount < 1) {
             return;
         }
 

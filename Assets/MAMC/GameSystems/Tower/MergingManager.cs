@@ -1,28 +1,33 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MergingManager : MonoBehaviour {
+    [SerializeField] private float _mergeTime = 2;
     [HideInInspector] public TowerManager Tower;
     public BlockMergerPool MergerPool { get; private set; }
     private List<BlockDetector> _blockDetectors;
     public List<BlockDetector> BlockDetectors { get { return _blockDetectors; } private set { _blockDetectors = value; } }
+    private bool _mergingDisabled;
     public Block[] _blocks;
+    public event Action<BlockType> OnMerge;
 
     void Start () {
         MergerPool = GetComponent<BlockMergerPool> ();
         _blockDetectors = new List<BlockDetector> ();
         _blockDetectors.AddRange (GetComponentsInChildren<BlockDetector> ());
         _blocks = new Block[_blockDetectors.Count];
-        int i = 0;
-        foreach (var detector in _blockDetectors) {
-            detector.MergeManager = this;
-            detector.index = i;
-            i++;
+        for (int i = 0; i < _blockDetectors.Count; i++) {
+            _blockDetectors[i].MergeManager = this;
+            _blockDetectors[i].Index = i;
         }
+        GameManager.Instance.OnGameBegin += EnableMerging;
+        GameManager.Instance.OnGameOver += DisableMerging;
     }
 
     private void Update () {
+        if (_mergingDisabled) return;
+
         CheckForMatches ();
     }
 
@@ -97,9 +102,24 @@ public class MergingManager : MonoBehaviour {
         }
 
         foreach (var mergeList in matches) {
-            mergeList.TryMergeBlocks (3);
+            mergeList.TryMergeBlocks (_mergeTime);
 
         }
+    }
+    public void MergeBlocks (BlockList blocks) {
+        if (_mergingDisabled) return;
+        foreach (var block in blocks.Blocks) {
+            Tower.DespawnBlock (block);
+        }
+        Tower.PowerUp.MergeBlocks (blocks);
+        OnMerge?.Invoke (blocks.Type);
+    }
+
+    public void EnableMerging () {
+        _mergingDisabled = false;
+    }
+    public void DisableMerging () {
+        _mergingDisabled = true;
     }
 
 }

@@ -5,7 +5,8 @@ using UnityEngine;
 public class BlockDetector : MonoBehaviour {
 
     public MergingManager MergeManager;
-    public int index; // set by merging manager
+    private int _index;
+    public int Index { get { return _index; } set { _index = value; } }
 
     public void UpdateClosestBlock () {
         Collider2D collider = GetComponent<Collider2D> ();
@@ -29,7 +30,7 @@ public class BlockDetector : MonoBehaviour {
         }
         if (closest != null) {
             Block block = closest.GetComponent<Block> ();
-            MergeManager.MoveBlockToIndex (block, index);
+            MergeManager.MoveBlockToIndex (block, _index);
         }
     }
     // private void OnTriggerEnter2D (Collider2D other) {

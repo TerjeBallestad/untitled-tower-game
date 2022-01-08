@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class GameManager : MonoBehaviour {
     private static GameManager instance;
     private TouchManager TouchManager;
     [HideInInspector] public TowerManager TowerManager;
+    [HideInInspector] public event Action OnGameBegin;
+    [HideInInspector] public event Action OnGameOver;
 
     // Singleton instantiation
     public static GameManager Instance {
@@ -17,7 +20,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    void Start () {
+    void Awake () {
         TouchManager = GetComponent<TouchManager> ();
         TowerManager = GetComponent<TowerManager> ();
         StartCoroutine (TowerManager.BlockSpawner ());
@@ -26,13 +29,14 @@ public class GameManager : MonoBehaviour {
     public void EndGame () {
         _gameOverMenu.SetActive (true);
         TowerManager.StopAllCoroutines ();
+        OnGameOver?.Invoke ();
     }
 
     public void StartNewGame () {
         TowerManager.DespawnAllBlocks ();
-        TowerManager.SetTwoRandomMonsters ();
         StartCoroutine (TowerManager.BlockSpawner ());
         _gameOverMenu.SetActive (false);
+        OnGameBegin?.Invoke ();
     }
 
 }

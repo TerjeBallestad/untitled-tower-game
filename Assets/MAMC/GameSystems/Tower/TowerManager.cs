@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +7,11 @@ using UnityEngine;
 public class TowerManager : MonoBehaviour {
     [SerializeField] private int _targetBlockCount = 10;
     [SerializeField] private float _spawnInterval = 2f;
-    [SerializeField] private float _matchTime = 2f;
     [SerializeField] private float _bronzePowerTime = 5, _silverPowerTime = 10, _goldPowerTime = 15, _diamondPowerTime = 20;
     [SerializeField] private MergingManager _mergingManager;
     [HideInInspector] public MergingManager MergingManager { get { return _mergingManager; } private set { _mergingManager = value; } }
+    private MonsterManager _monsterManager;
 
-    [SerializeField] private Monster _rightMonster, _lefMonster;
     public ProgressBar progressBar;
     private List<Block> _blocks;
     public List<Block> Blocks { get { return _blocks; } private set { _blocks = value; } }
@@ -25,9 +25,10 @@ public class TowerManager : MonoBehaviour {
 
     private void Start () {
         _blockPool = GetComponent<BlockPool> ();
+        _monsterManager = GetComponent<MonsterManager> ();
         _blocks = new List<Block> ();
         _mergingManager.Tower = this;
-        SetTwoRandomMonsters ();
+        _monsterManager.SetTwoRandomMonsters ();
         SetPowerUp (new NormalPower (this));
     }
 
@@ -50,7 +51,7 @@ public class TowerManager : MonoBehaviour {
 
     public Block GetRandomBlock () {
         Block block = _blockPool.Get ();
-        BlockType randomBlockType = (BlockType) Random.Range (0, 4);
+        BlockType randomBlockType = (BlockType) UnityEngine.Random.Range (0, 4);
         block.gameObject.name = randomBlockType.ToString ();
 
         if (randomBlockType == _previousSpawn) {
@@ -165,21 +166,6 @@ public class TowerManager : MonoBehaviour {
         SetPowerUp (new NormalPower (this));
     }
 
-    public void SetTwoRandomMonsters () {
-        BlockType monster1 = (BlockType) Random.Range (0, 4);
-        BlockType monster2 = Block.ExclusiveRandomBlockType (monster1);
-        _lefMonster.Setup (monster1);
-        _rightMonster.Setup (monster2);
-    }
-
-    public void HandleMonsterSwitching (BlockType newType) {
-        if (_lefMonster.Type == newType) {
-            _lefMonster.Setup (Block.ExclusiveRandomBlockType (newType, _rightMonster.Type));
-        } else if (_rightMonster.Type == newType) {
-            _rightMonster.Setup (Block.ExclusiveRandomBlockType (newType, _lefMonster.Type));
-        }
-    }
-
     public void DespawnAllBlocks () {
         foreach (var block in _blocks) {
             if (block.index >= 0)
@@ -189,5 +175,4 @@ public class TowerManager : MonoBehaviour {
         }
         _blocks.Clear ();
     }
-
 }

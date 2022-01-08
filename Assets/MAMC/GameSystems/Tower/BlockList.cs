@@ -114,18 +114,9 @@ public class BlockList : MonoBehaviour {
             yield return instruction;
         }
         Debug.Log ("timer ended");
-        foreach (var block in Blocks) {
 
-            Tower.DespawnBlock (block);
-
-        }
-        Tower.HandleMonsterSwitching (Type);
-        SpawnMergedBlock ();
+        Tower.MergingManager.MergeBlocks (this);
         Clear ();
         // _mergerPool.ReturnToPool (this);
-    }
-
-    private void SpawnMergedBlock () {
-        Tower.PowerUp.MergeBlocks (this);
     }
 }

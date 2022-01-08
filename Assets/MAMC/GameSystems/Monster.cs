@@ -11,6 +11,7 @@ public class Monster : MonoBehaviour {
     [SerializeField] private Sprite _blueSprite;
     [SerializeField] private Sprite _greenSprite;
     [SerializeField] private ProgressBar _rageBar;
+    public bool Pacified;
     private bool _shaking = false;
     private float _rage;
     private SpriteRenderer _spriteRenderer;
@@ -21,13 +22,9 @@ public class Monster : MonoBehaviour {
         Setup (BlockType.green);
     }
     private void Update () {
+        if (Pacified) return;
         _rage += Time.deltaTime;
-        Color color = Color.grey;
-        if (_rage > 80) color = Color.red;
-        else if (_rage > 60) color = Color.yellow;
-        else if (_rage > 40) color = Color.green;
-        else if (_rage > 20) color = Color.blue;
-        _rageBar.UpdateCurrentFill (100f, _rage, color);
+        UpdateUI ();
         if (_rage > 99 && !_shaking) {
             StartCoroutine (ShakeTower (1f));
         }
@@ -56,14 +53,28 @@ public class Monster : MonoBehaviour {
         }
     }
 
+    public void Pacify () {
+        Pacified = true;
+    }
+
+    public void UnPacify () {
+        Pacified = false;
+    }
+
+    public void AddRage (int rage) {
+        if (Pacified) return;
+        _rage += rage;
+        UpdateUI ();
+    }
+
     private void OnTriggerEnter2D (Collider2D other) {
         Block block = other.GetComponent<Block> ();
         if (block == null || block.BeingTouched == false) return;
 
         if ((int) block.Type < 4 && block.Type != Type) {
-            _rage += 30f;
+            AddRage (30);
         } else {
-            _rage -= 30f;
+            AddRage (-30);
         }
 
         block.GetEaten (this);
@@ -92,5 +103,14 @@ public class Monster : MonoBehaviour {
         }
         Camera.main.transform.position = cameraInitialPosition;
         _shaking = false;
+    }
+
+    private void UpdateUI () {
+        Color color = Color.grey;
+        if (_rage > 80) color = Color.red;
+        else if (_rage > 60) color = Color.yellow;
+        else if (_rage > 40) color = Color.green;
+        else if (_rage > 20) color = Color.blue;
+        _rageBar.UpdateCurrentFill (100f, _rage, color);
     }
 }
