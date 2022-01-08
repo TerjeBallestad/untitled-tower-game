@@ -26,7 +26,7 @@ public class TouchManager : MonoBehaviour {
                 SelectedBlock = selection.GetComponentInParent<Block> ();
             }
             if (SelectedBlock != null) {
-                SelectedBlock.BeingTouched = true;
+                SelectedBlock.StartTouching ();
                 if (touch.phase == TouchPhase.Began) {
                     initialTouchPosition = SelectedBlock.transform.position;
                     _canSelect = false;
@@ -40,7 +40,7 @@ public class TouchManager : MonoBehaviour {
                 if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
                     if (SelectedBlock != null) {
                         SelectedBlock.GetComponent<Rigidbody2D> ().AddForce ((SelectedBlock.transform.position - previousPosition) * 100, ForceMode2D.Impulse);
-                        SelectedBlock.BeingTouched = false;
+                        StartCoroutine (SelectedBlock.StopTouching ());
                         SelectedBlock = null;
                     }
                     DeltaVector = Vector3.zero;

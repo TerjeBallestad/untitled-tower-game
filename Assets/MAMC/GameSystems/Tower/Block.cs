@@ -7,7 +7,9 @@ public class Block : MonoBehaviour {
     public BlockType Type;
     public int index;
     public BlockList MergeList;
-    public bool BeingTouched;
+    private bool _beingTouched;
+    public bool BeingTouched { get { return _beingTouched; } private set { _beingTouched = value; } }
+
     [HideInInspector] public Vector3 InitialPosition; // Used for shaking from Monster.cs
     [SerializeField] private Material RedMaterial;
     [SerializeField] private Material PurpleMaterial;
@@ -24,7 +26,7 @@ public class Block : MonoBehaviour {
         Type = type;
         Tower = tower;
         index = -1;
-        BeingTouched = false;
+        _beingTouched = false;
         MeshRenderer = transform.GetChild (1).GetComponent<MeshRenderer> ();
 
         switch (Type) {
@@ -63,7 +65,7 @@ public class Block : MonoBehaviour {
     }
 
     private void OnCollisionEnter2D (Collision2D other) {
-        if (!BeingTouched && index != 0 && other.gameObject.CompareTag ("ground")) {
+        if (!_beingTouched && index != 0 && other.gameObject.CompareTag ("ground")) {
             GameManager.Instance.EndGame ();
         }
     }
@@ -79,6 +81,14 @@ public class Block : MonoBehaviour {
         }
         int r = Random.Range (0, types.Count);
         return types[r];
+    }
+
+    public IEnumerator StopTouching () {
+        yield return new WaitForSeconds (1);
+        _beingTouched = false;
+    }
+    public void StartTouching () {
+        _beingTouched = true;
     }
 
 }

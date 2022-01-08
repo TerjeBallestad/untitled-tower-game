@@ -11,6 +11,7 @@ public class Monster : MonoBehaviour {
     [SerializeField] private Sprite _blueSprite;
     [SerializeField] private Sprite _greenSprite;
     [SerializeField] private ProgressBar _rageBar;
+    private bool _shaking = false;
     private float _rage;
     private SpriteRenderer _spriteRenderer;
     private TowerManager _tower;
@@ -27,7 +28,7 @@ public class Monster : MonoBehaviour {
         else if (_rage > 40) color = Color.green;
         else if (_rage > 20) color = Color.blue;
         _rageBar.UpdateCurrentFill (100f, _rage, color);
-        if (_rage > 99) {
+        if (_rage > 99 && !_shaking) {
             StartCoroutine (ShakeTower (1f));
         }
     }
@@ -59,7 +60,7 @@ public class Monster : MonoBehaviour {
         Block block = other.GetComponent<Block> ();
         if (block == null || block.BeingTouched == false) return;
 
-        if (block.Type != Type) {
+        if ((int) block.Type < 4 && block.Type != Type) {
             _rage += 30f;
         } else {
             _rage -= 30f;
@@ -70,6 +71,7 @@ public class Monster : MonoBehaviour {
 
     private IEnumerator ShakeTower (float seconds) {
         _rage -= 10f;
+        _shaking = true;
         Vector3 cameraInitialPosition = Camera.main.transform.position;
         List<Block> blocks = new List<Block> (_tower.Blocks);
         float endTime = Time.time + seconds;
@@ -78,7 +80,7 @@ public class Monster : MonoBehaviour {
             block.InitialPosition = block.transform.position;
         }
         while (endTime > Time.time) {
-            _rage -= Time.deltaTime * 3;
+            _rage -= Time.deltaTime * 30f;
             Camera.main.transform.position = cameraInitialPosition + Random.insideUnitSphere * shakeMagnitude;
             foreach (var block in blocks) {
                 Vector3 target = block.InitialPosition + Random.insideUnitSphere * shakeMagnitude;
@@ -89,6 +91,6 @@ public class Monster : MonoBehaviour {
             yield return instruction;
         }
         Camera.main.transform.position = cameraInitialPosition;
-
+        _shaking = false;
     }
 }
