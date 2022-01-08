@@ -167,6 +167,7 @@ public class TowerManager : MonoBehaviour {
     }
 
     public void DespawnAllBlocks () {
+        if (_blocks == null || _blocks.Count < 1) return;
         foreach (var block in _blocks) {
             if (block.index >= 0)
                 _mergingManager._blocks[block.index] = null;
