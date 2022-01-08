@@ -33,9 +33,10 @@ public class TouchManager : MonoBehaviour {
         Touch touch = Input.GetTouch (0);
         Ray ray = Camera.main.ScreenPointToRay (touch.position);
         RaycastHit hit;
-        Debug.Log ("touching");
+
         if (Physics.Raycast (ray, out hit)) {
             var selection = hit.transform;
+            Debug.Log ("touching " + selection.gameObject.name);
             if (_canSelect == true) {
                 SelectedBlock = selection.GetComponentInParent<Block> ();
             }

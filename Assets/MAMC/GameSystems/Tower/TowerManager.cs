@@ -11,7 +11,6 @@ public class TowerManager : MonoBehaviour {
     [SerializeField] private MergingManager _mergingManager;
     [HideInInspector] public MergingManager MergingManager { get { return _mergingManager; } private set { _mergingManager = value; } }
     private MonsterManager _monsterManager;
-
     public ProgressBar progressBar;
     private List<Block> _blocks;
     public List<Block> Blocks { get { return _blocks; } private set { _blocks = value; } }
@@ -73,8 +72,8 @@ public class TowerManager : MonoBehaviour {
     }
 
     public void DespawnBlock (Block block) {
-        if (block.index >= 0)
-            _mergingManager._blocks[block.index] = null;
+        if (block.Index >= 0)
+            _mergingManager._blocks[block.Index] = null;
         _blocks.Remove (block);
         _blockPool.ReturnToPool (block);
         _blockCount--;
@@ -86,7 +85,7 @@ public class TowerManager : MonoBehaviour {
         while (end > Time.time) {
 
             foreach (var block in _blocks) {
-                if (block.index < 0) continue;
+                if (block.Index < 0) continue;
                 Vector3 target = block.transform.position;
                 target.x = 0;
                 // Vector3 target = _mergingManager.BlockDetectors[block.index].transform.position;
@@ -111,7 +110,7 @@ public class TowerManager : MonoBehaviour {
         for (int i = 0; i < amount; i++) {
             Block block = _blockPool.Get ();
             block.Setup (type, this);
-            block.index = 0; // or else it triggers game over if spawning on bottom
+            block.Index = 0; // or else it triggers game over if spawning on bottom
             block.transform.position = new Vector3 (position.x, position.y + (i * block.transform.localScale.y), position.z);
             _blocks.Add (block);
             _blockCount++;
@@ -169,8 +168,8 @@ public class TowerManager : MonoBehaviour {
     public void DespawnAllBlocks () {
         if (_blocks == null || _blocks.Count < 1) return;
         foreach (var block in _blocks) {
-            if (block.index >= 0)
-                _mergingManager._blocks[block.index] = null;
+            if (block.Index >= 0)
+                _mergingManager._blocks[block.Index] = null;
             _blockPool.ReturnToPool (block);
             _blockCount--;
         }

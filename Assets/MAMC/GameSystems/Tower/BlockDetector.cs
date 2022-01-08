@@ -7,18 +7,24 @@ public class BlockDetector : MonoBehaviour {
     public MergingManager MergeManager;
     private int _index;
     public int Index { get { return _index; } set { _index = value; } }
+    private Collider2D _collider;
+
+    private void Start () {
+        _collider = GetComponent<Collider2D> ();
+    }
 
     public void UpdateClosestBlock () {
-        Collider2D collider = GetComponent<Collider2D> ();
+        // Collider2D collider = GetComponent<Collider2D> ();
         List<Collider2D> result = new List<Collider2D> ();
         ContactFilter2D filter = new ContactFilter2D ();
         filter.useTriggers = true;
-        collider.OverlapCollider (filter, result);
+        filter.SetLayerMask (LayerMask.GetMask ("Blocks"));
+        _collider.OverlapCollider (filter, result);
         Collider2D closest = null;
         if (result.Count > 1) {
             float shortestDistance = Mathf.Infinity;
             foreach (var c in result) {
-                float distance = Vector2.Distance (c.transform.position, collider.transform.position);
+                float distance = Vector2.Distance (c.transform.position, _collider.transform.position);
                 if (distance < shortestDistance) {
                     shortestDistance = distance;
                     closest = c;

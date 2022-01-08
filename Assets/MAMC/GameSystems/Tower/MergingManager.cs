@@ -32,11 +32,11 @@ public class MergingManager : MonoBehaviour {
     }
 
     public void MoveBlockToIndex (Block block, int index) {
-        if (block.index > 0) {
-            _blocks[block.index] = null;
+        if (block.Index > 0) {
+            _blocks[block.Index] = null;
         }
         _blocks.SetValue (block, index);
-        block.index = index;
+        block.Index = index;
         block.gameObject.name = index.ToString () + " - " + block.Type.ToString ();
     }
 
@@ -59,7 +59,7 @@ public class MergingManager : MonoBehaviour {
         if (_blocks[index] == block && block.gameObject.activeInHierarchy) {
             _blocks[index] = null;
             block.MergeList.Remove (block);
-            block.index = -1;
+            block.Index = -1;
             return true;
         } else return false;
     }

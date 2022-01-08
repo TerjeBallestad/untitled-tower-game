@@ -5,7 +5,8 @@ using UnityEngine;
 public class Block : MonoBehaviour {
 
     public BlockType Type;
-    public int index;
+    private int _index;
+    public int Index { get { return _index; } set { _index = value; } }
     public BlockList MergeList;
     private bool _beingTouched;
     public bool BeingTouched { get { return _beingTouched; } private set { _beingTouched = value; } }
@@ -25,7 +26,7 @@ public class Block : MonoBehaviour {
     public void Setup (BlockType type, TowerManager tower) {
         Type = type;
         Tower = tower;
-        index = -1;
+        _index = -1;
         _beingTouched = false;
         MeshRenderer = transform.GetChild (1).GetComponent<MeshRenderer> ();
 
@@ -64,11 +65,11 @@ public class Block : MonoBehaviour {
         Tower.EatBlock (monster, this);
     }
 
-    private void OnCollisionEnter2D (Collision2D other) {
-        if (!_beingTouched && index != 0 && other.gameObject.CompareTag ("ground")) {
-            GameManager.Instance.EndGame ();
-        }
-    }
+    // private void OnCollisionEnter2D (Collision2D other) {
+    //     if (!_beingTouched && _index != 0 && other.gameObject.CompareTag ("ground")) {
+    //         GameManager.Instance.EndGame ();
+    //     }
+    // }
 
     public static BlockType ExclusiveRandomBlockType (BlockType excludeType, BlockType excludedType2 = BlockType.bronze) {
         List<BlockType> types = new List<BlockType> ();
