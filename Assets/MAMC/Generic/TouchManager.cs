@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TouchManager : MonoBehaviour {
@@ -26,16 +24,15 @@ public class TouchManager : MonoBehaviour {
     }
 
     void Update () {
-        if (_touchDisabled || Input.touchCount < 1) {
-            return;
-        }
+
+        if (_touchDisabled || Input.touchCount < 1) { return; }
 
         Touch touch = Input.GetTouch (0);
         Ray ray = Camera.main.ScreenPointToRay (touch.position);
         RaycastHit hit;
 
         if (Physics.Raycast (ray, out hit)) {
-            var selection = hit.transform;
+            Transform selection = hit.transform;
             Debug.Log ("touching " + selection.gameObject.name);
             if (_canSelect == true) {
                 SelectedBlock = selection.GetComponentInParent<Block> ();
@@ -52,15 +49,7 @@ public class TouchManager : MonoBehaviour {
                 MovementVector.y += DeltaVector.y;
                 SelectedBlock.transform.position = MovementVector;
                 // Debug.Log (DeltaVector);
-                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
-                    if (SelectedBlock != null) {
-                        SelectedBlock.GetComponent<Rigidbody2D> ().AddForce ((SelectedBlock.transform.position - previousPosition) * 100, ForceMode2D.Impulse);
-                        StartCoroutine (SelectedBlock.StopTouching ());
-                        SelectedBlock = null;
-                    }
-                    DeltaVector = Vector3.zero;
-                    _canSelect = true;
-                }
+
             } else {
                 _canSelect = true;
                 DeltaVector = Vector3.zero;
@@ -69,6 +58,16 @@ public class TouchManager : MonoBehaviour {
         }
         if (SelectedBlock != null) {
             previousPosition = SelectedBlock.transform.position;
+        }
+
+        if (SelectedBlock != null) {
+            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
+                SelectedBlock.GetComponent<Rigidbody2D> ().AddForce ((SelectedBlock.transform.position - previousPosition) * 100, ForceMode2D.Impulse);
+                StartCoroutine (SelectedBlock.StopTouching ());
+                SelectedBlock = null;
+                DeltaVector = Vector3.zero;
+                _canSelect = true;
+            }
         }
     }
 }
