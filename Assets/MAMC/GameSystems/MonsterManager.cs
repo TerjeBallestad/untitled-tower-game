@@ -36,6 +36,7 @@ public class MonsterManager : MonoBehaviour {
     public void HandleMerge (BlockType type) {
         _rightMonster.AddRage (-20);
         _lefMonster.AddRage (-20);
+        HandleMonsterSwitching (type);
     }
 
     public void PacifyMonsters () {
